@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="25dp"
+        android:src="@drawable/icon_back" />
+
+    <ImageView
+        android:id="@+id/icon_connect_helmet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="24dp"
+        android:src="@drawable/img_helmet" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/icon_connect_helmet"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:lineSpacingExtra="4dp"
+        android:textColor="@color/colorPrimary"
+        android:textSize="16dp"
+        android:text="기기 연결을 위해 Creatos 뒤 부분의\n파란색 LED 등을 확인해주십시오." />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:background="#f2f4fc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_marginTop="42dp"
+            android:id="@+id/icon_connect_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:src="@drawable/icon_sun" />
+
+        <TextView
+            android:id="@+id/text_connect_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/icon_connect_status"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
+            android:text="등 점멸중입니다."
+            android:textColor="@color/colorPrimary"
+            android:textSize="20dp" />
+
+        <ImageView
+            android:id="@+id/button_connect_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_connect_status"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:layout_marginBottom="66dp"
+            android:src="@drawable/button_next"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f2f4fc">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="50dp"
+        android:src="@drawable/icon_back" />
+
+    <LinearLayout
+        android:id="@+id/layout_noti_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="200dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/icon_noti_count_minus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/button_next_l" />
+
+        <TextView
+            android:id="@+id/text_noti_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:text="070"
+            android:textColor="#4a4a4a"
+            android:textSize="65dp" />
+
+        <ImageView
+            android:id="@+id/icon_noti_count_plus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/button_next_r" />
+
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/text_noti_message_01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout_noti_count"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:gravity="center_horizontal"
+        android:lineSpacingExtra="5sp"
+        android:text="숫자 카운팅이 끝나면 초기\n등록한 서브 번호로 사고 발생\n알림 메시지가 전송됩니다."
+        android:textColor="#7186c7"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/text_noti_message_02"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_noti_message_01"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:text="최소 50초 최대 150초 까지 가능"
+        android:textColor="#4a4a4a"
+        android:textSize="18sp" />
+
+    <ImageView
+        android:id="@+id/button_noti_save"
+        android:layout_width="280dp"
+        android:layout_height="45dp"
+        android:layout_below="@id/text_noti_message_02"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/button_next_copy"/>
+
+</RelativeLayout>
