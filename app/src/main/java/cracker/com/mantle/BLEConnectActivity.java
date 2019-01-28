@@ -2,19 +2,12 @@ package cracker.com.mantle;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothManager;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
@@ -24,7 +17,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import cracker.com.mantle.dialog.CheckDialog;
-import cracker.com.mantle.service.BluetoothLeService;
+import cracker.com.mantle.service.ConnectListener;
+import cracker.com.mantle.service.CrackerManager;
 
 public class BLEConnectActivity extends BaseActivity implements View.OnClickListener {
 
@@ -47,7 +41,6 @@ public class BLEConnectActivity extends BaseActivity implements View.OnClickList
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ble_connect);
-
 
         initializeViews();
     }
@@ -117,25 +110,34 @@ public class BLEConnectActivity extends BaseActivity implements View.OnClickList
                 isFirst = false;
                 isScanFinish = true;
                 bluetoothAdapter.stopLeScan(scanCallback);
-
-                crackerDevice = new cracker.com.mantle.model.BluetoothDevice(device.getName(), device.getAddress());
-//                startBLEService(crackerDevice);
-
-                BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-                BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
-
-                final BluetoothDevice dv = bluetoothAdapter.getRemoteDevice(crackerDevice.getAddress());
-                BluetoothGatt bluetoothGatt = dv.connectGatt(BLEConnectActivity.this, false, gattCallback);
+                CrackerManager.getInstance().connect(BLEConnectActivity.this, device.getAddress());
+                CrackerManager.getInstance().setConnectListener(new ConnectListener() {
+                    @Override
+                    public void onServiceDiscovered() {
+                        showConnectComplete();
+                    }
+                });
             }
         }
     };
 
-    BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
-        @Override
-        public void onReliableWriteCompleted(BluetoothGatt gatt, int status) {
-            super.onReliableWriteCompleted(gatt, status);
-        }
-    };
+    private void showConnectComplete() {
+        CheckDialog connectCompleteDialog = new CheckDialog();
+        connectCompleteDialog.setMessage("디바이스와 연결이 완료되었습니다.\n헬멧 착용 후 다음 버튼을 눌러주세요");
+        connectCompleteDialog.setOnNextClick(new CheckDialog.OnNextClick() {
+            @Override
+            public void onNextClick(CheckDialog dialog) {
+                dialog.dismissAllowingStateLoss();
+                startActivity(new Intent(BLEConnectActivity.this, DeviceActivity.class));
+                finish();
+            }
+        });
+        connectCompleteDialog.show(getSupportFragmentManager(), CheckDialog.TAG);
+    }
 
-
+    @Override
+    protected void onStop() {
+        CrackerManager.getInstance().setConnectListener(null);
+        super.onStop();
+    }
 }

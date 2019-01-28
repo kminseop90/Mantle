@@ -44,7 +44,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
         android:gravity="center_horizontal"
-        android:text="인천광역시 계양구 장기동 경인 아라뱃길"
+        android:text=""
         android:textColor="#7186c7"
         android:textSize="15dp" />
 

@@ -13,15 +13,12 @@ import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
-import android.telephony.SmsManager;
-import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.File;
@@ -160,7 +157,7 @@ public class BluetoothLeService extends Service {
     private final BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-            Log.d(TAG, "onConnectionStateChange: ");
+            Log.d(TAG, "onServiceDiscovered: ");
             String intentAction;
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 intentAction = ACTION_GATT_CONNECTED;
@@ -347,7 +344,7 @@ public class BluetoothLeService extends Service {
      * @param address The device address of the destination device.
      * @return Return true if the connection is initiated successfully. The connection result
      * is reported asynchronously through the
-     * {@code BluetoothGattCallback#onConnectionStateChange(android.bluetooth.BluetoothGatt, int, int)}
+     * {@code BluetoothGattCallback#onServiceDiscovered(android.bluetooth.BluetoothGatt, int, int)}
      * callback.
      */
     public boolean connect(final String address) {
@@ -385,7 +382,7 @@ public class BluetoothLeService extends Service {
     /**
      * Disconnects an existing connection or cancel a pending connection. The disconnection result
      * is reported asynchronously through the
-     * {@code BluetoothGattCallback#onConnectionStateChange(android.bluetooth.BluetoothGatt, int, int)}
+     * {@code BluetoothGattCallback#onServiceDiscovered(android.bluetooth.BluetoothGatt, int, int)}
      * callback.
      */
     public void disconnect() {

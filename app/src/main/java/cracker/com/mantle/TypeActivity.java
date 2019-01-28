@@ -3,10 +3,11 @@ package cracker.com.mantle;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 public class TypeActivity extends BaseActivity implements View.OnClickListener {
+
+    private boolean isFlag = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -17,6 +18,10 @@ public class TypeActivity extends BaseActivity implements View.OnClickListener {
         findViewById(R.id.icon_type_kickboard).setOnClickListener(this);
         findViewById(R.id.icon_type_mtb).setOnClickListener(this);
         findViewById(R.id.icon_type_road).setOnClickListener(this);
+
+        if(getIntent() != null) {
+            isFlag = getIntent().getBooleanExtra("flag", false);
+        }
     }
 
     private void startBLEConnectActivity() {
@@ -39,6 +44,10 @@ public class TypeActivity extends BaseActivity implements View.OnClickListener {
             case R.id.icon_type_road:
                 break;
         }
-        startBLEConnectActivity();
+        if(!isFlag) {
+            startBLEConnectActivity();
+        } else {
+            finish();
+        }
     }
 }
