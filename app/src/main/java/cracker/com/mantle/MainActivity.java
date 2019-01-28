@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import cracker.com.mantle.fragment.CalendarFragment;
 import cracker.com.mantle.fragment.SettingFragment;
 import cracker.com.mantle.fragment.StatusFragment;
+import cracker.com.mantle.service.CrackerManager;
 
 public class MainActivity extends BaseActivity {
 
@@ -31,6 +32,7 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
 
         initialize();
+//        CrackerManager.getInstance().write("F1");
     }
 
     private void initialize() {
@@ -90,5 +92,11 @@ public class MainActivity extends BaseActivity {
         }
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .commit();
+    }
+
+    @Override
+    protected void onStop() {
+        CrackerManager.getInstance().disconnect();
+        super.onStop();
     }
 }

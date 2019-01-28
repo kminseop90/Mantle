@@ -5,18 +5,45 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
+import android.bluetooth.BluetoothProfile;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class CrackerManager {
 
     public static final String TAG = CrackerManager.class.getSimpleName();
+    public static final String GATT_SERVICE = "0000fff0-0000-1000-8000-00805f9b34fb";
+    public static final String GATT_CHARACTERISTIC_01 = "0000fff1-0000-1000-8000-00805f9b34fb"; // 가속도, 자이로
+    public static final String GATT_CHARACTERISTIC_02 = "0000fff2-0000-1000-8000-00805f9b34fb"; // 심박, 배터리
+    public static final String GATT_CHARACTERISTIC_03 = "0000fff3-0000-1000-8000-00805f9b34fb"; // cmd 명령어 확인 용도
+    public static final String GATT_CHARACTERISTIC_04 = "0000fff4-0000-1000-8000-00805f9b34fb"; // write용도
+
+    private final String LIST_NAME = "NAME";
+    private final String LIST_UUID = "UUID";
+
+    /*F1 : LEFT 10회 점등, Buzzer
+    F2 : RIGHT 10회 점등, Buzzer
+    F3 : HEAD Emergency ON
+    F4 : HEAD Emergency OFF
+    F5 : HEAD Emergency Buzzer ON
+    F6 : HEAD Emergency Buzzer OFF*/
+
+
     ConnectListener connectListener;
     private static CrackerManager instance;
+    private BluetoothGatt bluetoothGatt;
+    private ArrayList<ArrayList<BluetoothGattCharacteristic>> mGattCharacteristics = new ArrayList<>();
 
     public static CrackerManager getInstance() {
-        if(instance == null)
+        if (instance == null)
             instance = new CrackerManager();
 
         return instance;
@@ -34,28 +61,112 @@ public class CrackerManager {
         BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
         BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
         final BluetoothDevice dv = bluetoothAdapter.getRemoteDevice(address);
-        dv.connectGatt(context, false, gattCallback);
+        bluetoothGatt = dv.connectGatt(context, false, gattCallback);
+        bluetoothGatt.connect();
+    }
+
+    public void disconnect() {
+        bluetoothGatt.disconnect();
+    }
+
+    public void readGyro() {
+        gyroHandler.sendEmptyMessage(0);
+    }
+
+    public void write(String order) {
+            /*F1 : LEFT 10회 점등, Buzzer
+    F2 : RIGHT 10회 점등, Buzzer
+    F3 : HEAD Emergency ON
+    F4 : HEAD Emergency OFF
+    F5 : HEAD Emergency Buzzer ON
+    F6 : HEAD Emergency Buzzer OFF*/
+        BluetoothGattCharacteristic characteristic = mGattCharacteristics.get(2).get(3);
+        byte[] byteArray = hexStringToByteArray(order);
+        characteristic.setValue(byteArray);
+        bluetoothGatt.writeCharacteristic(characteristic);
     }
 
     public void setConnectListener(ConnectListener listener) {
         this.connectListener = listener;
     }
 
-    BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
 
+    private void settingGattServices(List<BluetoothGattService> gattServices) {
+        if (gattServices == null) return;
+        String uuid = null;
+        String unknownServiceString = "unknownService";
+        String unknownCharaString = "unknownCharacteristic";
+
+        ArrayList<HashMap<String, String>> gattServiceData = new ArrayList<HashMap<String, String>>();
+        ArrayList<ArrayList<HashMap<String, String>>> gattCharacteristicData
+                = new ArrayList<ArrayList<HashMap<String, String>>>();
+        mGattCharacteristics = new ArrayList<>();
+
+        // Loops through available GATT Services.
+        for (BluetoothGattService gattService : gattServices) {
+            HashMap<String, String> currentServiceData = new HashMap<String, String>();
+            uuid = gattService.getUuid().toString();
+            currentServiceData.put(LIST_NAME, SampleGattAttributes.lookup(uuid, unknownServiceString));
+            currentServiceData.put(LIST_UUID, uuid);
+            gattServiceData.add(currentServiceData);
+
+            ArrayList<HashMap<String, String>> gattCharacteristicGroupData = new ArrayList<>();
+            List<BluetoothGattCharacteristic> gattCharacteristics = gattService.getCharacteristics();
+            ArrayList<BluetoothGattCharacteristic> charas = new ArrayList<>();
+
+            // Loops through available Characteristics.
+            for (BluetoothGattCharacteristic gattCharacteristic : gattCharacteristics) {
+                charas.add(gattCharacteristic);
+                HashMap<String, String> currentCharaData = new HashMap<>();
+                uuid = gattCharacteristic.getUuid().toString();
+                currentCharaData.put(LIST_NAME, SampleGattAttributes.lookup(uuid, unknownCharaString));
+                currentCharaData.put(LIST_UUID, uuid);
+                gattCharacteristicGroupData.add(currentCharaData);
+            }
+            mGattCharacteristics.add(charas);
+            gattCharacteristicData.add(gattCharacteristicGroupData);
+        }
+    }
+
+    public static byte[] hexStringToByteArray(String s) {
+        int len = s.length();
+        byte[] data = new byte[len / 2];
+        for (int i = 0; i < len; i += 2) {
+            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
+                    + Character.digit(s.charAt(i+1), 16));
+        }
+        return data;
+    }
+
+
+    private Handler gyroHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            bluetoothGatt.readCharacteristic(mGattCharacteristics.get(2).get(0));
+            sendEmptyMessageDelayed(0, 300);
+        }
+    };
+    private BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-            Log.d(TAG, "onConnectionStateChange: " + newState);
-            gatt.discoverServices();
             super.onConnectionStateChange(gatt, status, newState);
+            Log.d(TAG, "onConnectionStateChange: " + newState);
+            if (newState == BluetoothProfile.STATE_CONNECTED) {
+                bluetoothGatt.discoverServices();
+            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                if (connectListener != null) {
+                    connectListener.onConnectFailed(gatt.getDevice().getAddress());
+                }
+            }
         }
 
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             Log.d(TAG, "onServicesDiscovered: ");
             super.onServicesDiscovered(gatt, status);
-            if(status == BluetoothGatt.GATT_SUCCESS) {
-                if(connectListener != null) {
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                settingGattServices(gatt.getServices());
+                if (connectListener != null) {
                     connectListener.onServiceDiscovered();
                 }
             }
@@ -63,8 +174,25 @@ public class CrackerManager {
 
         @Override
         public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
-            Log.d(TAG, "onCharacteristicRead: ");
             super.onCharacteristicRead(gatt, characteristic, status);
+            final byte[] data = characteristic.getValue();
+            String stringData = "";
+            if (data != null && data.length > 0) {
+                final StringBuilder stringBuilder = new StringBuilder(data.length);
+                for (byte byteChar : data) {
+                    stringBuilder.append(String.format("%02d ", byteChar));
+                }
+                stringData = stringBuilder.toString();
+            }
+
+            Log.d(TAG, "onCharacteristicRead: " + stringData);
+            if (GATT_CHARACTERISTIC_01.equals(characteristic.getUuid())) {
+
+            } else if (GATT_CHARACTERISTIC_02.equals(characteristic.getUuid())) {
+
+            } else if (GATT_CHARACTERISTIC_03.equals(characteristic.getUuid())) {
+
+            }
         }
 
         @Override

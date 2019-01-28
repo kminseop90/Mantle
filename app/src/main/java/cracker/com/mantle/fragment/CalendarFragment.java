@@ -72,6 +72,8 @@ public class CalendarFragment extends Fragment implements LocationListener {
 
     private String getAddress(double latitude, double longitude) {
         String nowAddress ="현재 위치를 확인 할 수 없습니다.";
+        if(getContext() == null) return nowAddress;
+
         Geocoder geocoder = new Geocoder(getContext(), Locale.KOREA);
         List<Address> address;
         try {

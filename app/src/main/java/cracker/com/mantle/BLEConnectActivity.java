@@ -4,11 +4,14 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -20,7 +23,7 @@ import cracker.com.mantle.dialog.CheckDialog;
 import cracker.com.mantle.service.ConnectListener;
 import cracker.com.mantle.service.CrackerManager;
 
-public class BLEConnectActivity extends BaseActivity implements View.OnClickListener {
+public class BLEConnectActivity extends BaseActivity implements View.OnClickListener, ConnectListener{
 
     public static final String TAG = BLEConnectActivity.class.getSimpleName();
     public static final String DEVICE_NAME = "CRACKER1";
@@ -30,8 +33,6 @@ public class BLEConnectActivity extends BaseActivity implements View.OnClickList
     private ImageView nextView;
     private BluetoothAdapter bluetoothAdapter;
     private Handler handler;
-
-    private cracker.com.mantle.model.BluetoothDevice crackerDevice;
 
     private boolean isFirst = true;
     boolean isScanFinish = false;
@@ -81,7 +82,7 @@ public class BLEConnectActivity extends BaseActivity implements View.OnClickList
     }
 
     private void changeView(boolean isScan) {
-        if(isScan) {
+        if (isScan) {
             statusIcon.setImageResource(R.drawable.icon_broadcasting);
             statusMessage.setText("디바이스와 연결중 입니다.");
             nextView.setVisibility(View.INVISIBLE);
@@ -104,22 +105,19 @@ public class BLEConnectActivity extends BaseActivity implements View.OnClickList
 
     BluetoothAdapter.LeScanCallback scanCallback = new BluetoothAdapter.LeScanCallback() {
         @Override
-        public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
-            Log.d(TAG, "onLeScan: " + device.getName());
-            if (device != null && !TextUtils.isEmpty(device.getName()) && device.getName().startsWith(DEVICE_NAME) && isFirst) {
-                isFirst = false;
-                isScanFinish = true;
-                bluetoothAdapter.stopLeScan(scanCallback);
-                CrackerManager.getInstance().connect(BLEConnectActivity.this, device.getAddress());
-                CrackerManager.getInstance().setConnectListener(new ConnectListener() {
-                    @Override
-                    public void onServiceDiscovered() {
-                        showConnectComplete();
-                    }
-                });
+        public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
+            if (device != null && !TextUtils.isEmpty(device.getName())) {
+                Log.d(TAG, "onLeScan: " + device.getName());
+                if (device.getName().equals(DEVICE_NAME)) {
+                    isScanFinish = true;
+                    bluetoothAdapter.stopLeScan(scanCallback);
+                    CrackerManager.getInstance().setConnectListener(BLEConnectActivity.this);
+                    CrackerManager.getInstance().connect(BLEConnectActivity.this, device.getAddress());
+                }
             }
         }
     };
+
 
     private void showConnectComplete() {
         CheckDialog connectCompleteDialog = new CheckDialog();
@@ -139,5 +137,28 @@ public class BLEConnectActivity extends BaseActivity implements View.OnClickList
     protected void onStop() {
         CrackerManager.getInstance().setConnectListener(null);
         super.onStop();
+    }
+
+    @Override
+    public void onServiceDiscovered() {
+        showConnectComplete();
+    }
+
+    @Override
+    public void onConnectFailed(final String address) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                AlertDialog.Builder builder = new AlertDialog.Builder(BLEConnectActivity.this);
+                builder.setMessage("연결이 실패하였습니다, 다시 시도할까요?");
+                builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        CrackerManager.getInstance().connect(BLEConnectActivity.this, address);
+                    }
+                });
+                builder.show();
+            }
+        });
     }
 }

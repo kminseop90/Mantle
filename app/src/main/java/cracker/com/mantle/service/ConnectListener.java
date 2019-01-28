@@ -4,4 +4,6 @@ public interface ConnectListener {
 
     void onServiceDiscovered();
 
+    void onConnectFailed(String address);
+
 }
