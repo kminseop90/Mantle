@@ -45,6 +45,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/layout_setting_change_device"
                 android:background="#f3f3f3"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"

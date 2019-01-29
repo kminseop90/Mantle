@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import cracker.com.mantle.DeviceActivity;
 import cracker.com.mantle.NotiActivity;
 import cracker.com.mantle.R;
 import cracker.com.mantle.TypeActivity;
@@ -38,15 +39,16 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
         parentView.findViewById(R.id.btn_setting_phone_edit_02).setOnClickListener(this);
         parentView.findViewById(R.id.btn_setting_phone_edit_03).setOnClickListener(this);
         parentView.findViewById(R.id.layout_setting_change_mode).setOnClickListener(this);
+        parentView.findViewById(R.id.layout_setting_change_device).setOnClickListener(this);
 
         phoneNumber01View = parentView.findViewById(R.id.txt_setting_phone_number_01);
         phoneNumber02View = parentView.findViewById(R.id.txt_setting_phone_number_02);
         phoneNumber03View = parentView.findViewById(R.id.txt_setting_phone_number_03);
 
         phonePreferenceUtil = new PreferenceUtil(getContext());
-        phoneNumber01View.setText(phonePreferenceUtil.getPrefValue(PreferenceUtil.PREF_PHONE_NUMBER_01));
-        phoneNumber02View.setText(phonePreferenceUtil.getPrefValue(PreferenceUtil.PREF_PHONE_NUMBER_02));
-        phoneNumber03View.setText(phonePreferenceUtil.getPrefValue(PreferenceUtil.PREF_PHONE_NUMBER_03));
+        phoneNumber01View.setText(phonePreferenceUtil.getPrefStringValue(PreferenceUtil.PREF_PHONE_NUMBER_01));
+        phoneNumber02View.setText(phonePreferenceUtil.getPrefStringValue(PreferenceUtil.PREF_PHONE_NUMBER_02));
+        phoneNumber03View.setText(phonePreferenceUtil.getPrefStringValue(PreferenceUtil.PREF_PHONE_NUMBER_03));
     }
 
     private void showPhoneNumberEditDialog(final int id) {
@@ -90,6 +92,10 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                 i.putExtra("flag", true);
                 startActivity(i);
                 break;
+            case R.id.layout_setting_change_device:
+                i = new Intent(getContext(), DeviceActivity.class);
+                i.putExtra("flag", true);
+                startActivity(i);
         }
     }
 }

@@ -48,6 +48,7 @@
             android:layout_centerHorizontal="true"
             android:src="@drawable/img_helmet_head" />
 
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -59,6 +60,8 @@
             android:text="제스처 사용(깜빡이)을 위해 헬멧 착용 후\n세팅이 필요합니다. 시작하기를 눌러 진행\n하세요"
             android:textColor="#7186c7"
             android:textSize="16dp" />
+
+
     </RelativeLayout>
 
     <RelativeLayout
@@ -69,17 +72,33 @@
         android:layout_weight="1"
         android:visibility="gone">
 
-        <ImageView
-            android:id="@+id/icon_device_image_03"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/layout_device_image_03"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:src="@drawable/helmet_head_l" />
+            android:clipChildren="false">
+
+            <ImageView
+                android:id="@+id/icon_device_image_03"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/helmet_head_l" />
+
+            <cracker.com.mantle.components.EditBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="40dp"
+                android:layout_toRightOf="@id/icon_device_image_03"
+                android:clipChildren="false" />
+
+        </RelativeLayout>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/icon_device_image_03"
+            android:layout_below="@id/layout_device_image_03"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"
             android:gravity="center_horizontal"
@@ -98,17 +117,34 @@
         android:layout_weight="1"
         android:visibility="gone">
 
-        <ImageView
-            android:id="@+id/icon_device_image_04"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/layout_device_image_04"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:src="@drawable/helmet_head_r" />
+            android:clipChildren="false">
+
+            <ImageView
+                android:id="@+id/icon_device_image_04"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/helmet_head_r" />
+
+            <cracker.com.mantle.components.EditBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@id/icon_device_image_04"
+                android:clipChildren="false" />
+        </RelativeLayout>
+
+
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/icon_device_image_04"
+            android:layout_below="@id/layout_device_image_04"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"
             android:gravity="center_horizontal"
@@ -120,12 +156,11 @@
     </RelativeLayout>
 
     <ImageView
-        android:src="@drawable/button_next"
         android:id="@+id/btn_device_next"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="70dp"
-        />
+        android:src="@drawable/button_next" />
 
 </LinearLayout>

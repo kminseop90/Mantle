@@ -28,6 +28,8 @@ public class CrackerManager {
 
     private final String LIST_NAME = "NAME";
     private final String LIST_UUID = "UUID";
+    private int dataIntervalSecond = 1000;
+    private String lastReceiveData = "";
 
     /*F1 : LEFT 10회 점등, Buzzer
     F2 : RIGHT 10회 점등, Buzzer
@@ -37,7 +39,9 @@ public class CrackerManager {
     F6 : HEAD Emergency Buzzer OFF*/
 
 
-    ConnectListener connectListener;
+    private ConnectListener connectListener;
+    private DataStreamListener dataStreamListener;
+
     private static CrackerManager instance;
     private BluetoothGatt bluetoothGatt;
     private ArrayList<ArrayList<BluetoothGattCharacteristic>> mGattCharacteristics = new ArrayList<>();
@@ -66,11 +70,19 @@ public class CrackerManager {
     }
 
     public void disconnect() {
-        bluetoothGatt.disconnect();
+        if(bluetoothGatt != null) bluetoothGatt.disconnect();
     }
 
-    public void readGyro() {
+    public void readGyro(int millisecond) {
+        this.dataIntervalSecond = millisecond;
         gyroHandler.sendEmptyMessage(0);
+    }
+
+    public String endGyro() {
+        if(gyroHandler.hasMessages(0)) {
+            gyroHandler.removeMessages(0);
+        }
+        return lastReceiveData;
     }
 
     public void write(String order) {
@@ -90,6 +102,9 @@ public class CrackerManager {
         this.connectListener = listener;
     }
 
+    public void setDataStreamListener(DataStreamListener dataStreamListener) {
+        this.dataStreamListener = dataStreamListener;
+    }
 
     private void settingGattServices(List<BluetoothGattService> gattServices) {
         if (gattServices == null) return;
@@ -143,7 +158,7 @@ public class CrackerManager {
         @Override
         public void handleMessage(Message msg) {
             bluetoothGatt.readCharacteristic(mGattCharacteristics.get(2).get(0));
-            sendEmptyMessageDelayed(0, 300);
+            sendEmptyMessageDelayed(0, dataIntervalSecond);
         }
     };
     private BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
@@ -185,6 +200,7 @@ public class CrackerManager {
                 stringData = stringBuilder.toString();
             }
 
+            lastReceiveData = stringData;
             Log.d(TAG, "onCharacteristicRead: " + stringData);
             if (GATT_CHARACTERISTIC_01.equals(characteristic.getUuid())) {
 

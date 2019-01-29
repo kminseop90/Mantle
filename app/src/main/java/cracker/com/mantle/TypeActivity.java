@@ -7,7 +7,7 @@ import android.view.View;
 
 public class TypeActivity extends BaseActivity implements View.OnClickListener {
 
-    private boolean isFlag = false;
+    private boolean isSettingFlag = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -19,14 +19,16 @@ public class TypeActivity extends BaseActivity implements View.OnClickListener {
         findViewById(R.id.icon_type_mtb).setOnClickListener(this);
         findViewById(R.id.icon_type_road).setOnClickListener(this);
 
-        if(getIntent() != null) {
-            isFlag = getIntent().getBooleanExtra("flag", false);
+        if (getIntent() != null) {
+            isSettingFlag = getIntent().getBooleanExtra("flag", false);
         }
     }
 
     private void startBLEConnectActivity() {
-        Intent intent = new Intent(this, BLEConnectActivity.class);
-        startActivity(intent);
+        if(!isSettingFlag) {
+            Intent intent = new Intent(this, BLEConnectActivity.class);
+            startActivity(intent);
+        }
         finish();
     }
 
@@ -44,10 +46,6 @@ public class TypeActivity extends BaseActivity implements View.OnClickListener {
             case R.id.icon_type_road:
                 break;
         }
-        if(!isFlag) {
-            startBLEConnectActivity();
-        } else {
-            finish();
-        }
+        startBLEConnectActivity();
     }
 }

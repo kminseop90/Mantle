@@ -3,13 +3,13 @@ package cracker.com.mantle;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import cracker.com.mantle.dialog.CheckDialog;
+import cracker.com.mantle.service.CrackerManager;
 
 public class DeviceActivity extends BaseActivity implements View.OnClickListener {
 
@@ -26,11 +26,15 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
     private RelativeLayout step04Layout;
 
     private ImageView saveView;
+    private boolean isSettingFlag = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device);
+        if(getIntent() != null) {
+            isSettingFlag = getIntent().getBooleanExtra("flag", false);
+        }
 
         step01Layout = findViewById(R.id.layout_device_step_01);
         step02Layout = findViewById(R.id.layout_device_step_02);
@@ -44,6 +48,7 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
     private void nextClick() {
         switch (currentStep) {
             case STEP_01:
+                // 자전거 준비
                 saveView.setImageResource(R.drawable.button_next);
                 step01Layout.setVisibility(View.GONE);
                 step02Layout.setVisibility(View.VISIBLE);
@@ -51,13 +56,17 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
                 step04Layout.setVisibility(View.GONE);
                 break;
             case STEP_02:
+                // 왼쪽 측정
                 saveView.setImageResource(R.drawable.button_save);
                 step01Layout.setVisibility(View.GONE);
                 step02Layout.setVisibility(View.GONE);
                 step03Layout.setVisibility(View.VISIBLE);
                 step04Layout.setVisibility(View.GONE);
+                startLeftGyro();
                 break;
             case STEP_03:
+                // 오른쪽 측정
+                endLeftGyro();
                 CheckDialog setting01CompleteDialog = new CheckDialog();
                 setting01CompleteDialog.setMessage("설정이 저장되었습니다.");
                 setting01CompleteDialog.setOnNextClick(new CheckDialog.OnNextClick() {
@@ -68,18 +77,22 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
                         step02Layout.setVisibility(View.GONE);
                         step03Layout.setVisibility(View.GONE);
                         step04Layout.setVisibility(View.VISIBLE);
+                        startRightGyro();
                     }
                 });
                 setting01CompleteDialog.show(getSupportFragmentManager(), CheckDialog.TAG);
                 break;
             case STEP_04:
+                endRightGyro();
                 CheckDialog setting02CompleteDialog = new CheckDialog();
                 setting02CompleteDialog.setMessage("설정이 저장되었습니다.");
                 setting02CompleteDialog.setOnNextClick(new CheckDialog.OnNextClick() {
                     @Override
                     public void onNextClick(CheckDialog dialog) {
-                        dialog.dismissAllowingStateLoss();
-                        startActivity(new Intent(DeviceActivity.this, MainActivity.class));
+                        if(!isSettingFlag) {
+                            dialog.dismissAllowingStateLoss();
+                            startActivity(new Intent(DeviceActivity.this, MainActivity.class));
+                        }
                         finish();
                     }
                 });
@@ -88,6 +101,25 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
         }
         currentStep++;
     }
+
+    private void startLeftGyro() {
+        CrackerManager.getInstance().readGyro(500);
+    }
+
+    private void endLeftGyro() {
+        String data = CrackerManager.getInstance().endGyro();
+        Toast.makeText(this, data, Toast.LENGTH_SHORT).show();
+    }
+
+    private void startRightGyro() {
+        CrackerManager.getInstance().readGyro(500);
+    }
+
+    private void endRightGyro() {
+        String data = CrackerManager.getInstance().endGyro();
+        Toast.makeText(this, data, Toast.LENGTH_SHORT).show();
+    }
+
 
     @Override
     public void onClick(View view) {
