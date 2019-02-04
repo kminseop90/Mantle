@@ -86,6 +86,7 @@
                 android:src="@drawable/helmet_head_l" />
 
             <cracker.com.mantle.components.EditBox
+                android:id="@+id/view_edit_box_left"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
@@ -132,6 +133,7 @@
                 android:src="@drawable/helmet_head_r" />
 
             <cracker.com.mantle.components.EditBox
+                android:id="@+id/view_edit_box_right"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"

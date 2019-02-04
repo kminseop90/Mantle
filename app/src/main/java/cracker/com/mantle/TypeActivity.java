@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
+import cracker.com.mantle.util.PreferenceUtil;
+
 public class TypeActivity extends BaseActivity implements View.OnClickListener {
 
     private boolean isSettingFlag = false;
@@ -38,14 +40,23 @@ public class TypeActivity extends BaseActivity implements View.OnClickListener {
         int id = view.getId();
         switch (id) {
             case R.id.icon_type_kids:
+                setType("kids");
                 break;
             case R.id.icon_type_kickboard:
+                setType("kickboard");
                 break;
             case R.id.icon_type_mtb:
+                setType("mtb");
                 break;
             case R.id.icon_type_road:
+                setType("road");
                 break;
         }
         startBLEConnectActivity();
+    }
+
+    private void setType(String type) {
+        PreferenceUtil preferenceUtil = new PreferenceUtil(this);
+        preferenceUtil.setPrefValue(PreferenceUtil.PREF_TYPE, type);
     }
 }

@@ -40,7 +40,7 @@ public class CrackerManager {
 
 
     private ConnectListener connectListener;
-    private DataStreamListener dataStreamListener;
+    private ArrayList<DataStreamListener> dataStreamListeners = new ArrayList<>();
 
     private static CrackerManager instance;
     private BluetoothGatt bluetoothGatt;
@@ -102,8 +102,16 @@ public class CrackerManager {
         this.connectListener = listener;
     }
 
-    public void setDataStreamListener(DataStreamListener dataStreamListener) {
-        this.dataStreamListener = dataStreamListener;
+    public void addDataStreamListeners(DataStreamListener dataStreamListener) {
+        if(dataStreamListeners != null) {
+            dataStreamListeners.add(dataStreamListener);
+        }
+    }
+
+    public void removeDataStreamListener(DataStreamListener dataStreamListener) {
+        if(dataStreamListeners != null && dataStreamListeners.contains(dataStreamListener)) {
+            dataStreamListeners.remove(dataStreamListener);
+        }
     }
 
     private void settingGattServices(List<BluetoothGattService> gattServices) {
@@ -201,7 +209,11 @@ public class CrackerManager {
             }
 
             lastReceiveData = stringData;
-            Log.d(TAG, "onCharacteristicRead: " + stringData);
+            if(dataStreamListeners != null && !dataStreamListeners.isEmpty()) {
+                for(DataStreamListener dataStreamListener : dataStreamListeners) {
+                    dataStreamListener.onDataReceive(stringData);
+                }
+            }
             if (GATT_CHARACTERISTIC_01.equals(characteristic.getUuid())) {
 
             } else if (GATT_CHARACTERISTIC_02.equals(characteristic.getUuid())) {

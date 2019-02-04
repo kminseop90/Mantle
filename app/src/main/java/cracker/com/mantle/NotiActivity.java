@@ -4,17 +4,21 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.telephony.SmsManager;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import cracker.com.mantle.service.CrackerManager;
 import cracker.com.mantle.util.PreferenceUtil;
 
 public class NotiActivity extends BaseActivity {
 
     private PreferenceUtil preferenceUtil;
     public static final String TYPE_EMERGENCY = "TYPE_EMERGENCY";
+    public static final String DEFAULT_PHONE_NUMBER = "000-0000-0000";
 
     private TextView countView;
     private ImageView saveView;
@@ -35,6 +39,7 @@ public class NotiActivity extends BaseActivity {
         if(isEmergency) {
             initializeEmergency();
             startTimer();
+            CrackerManager.getInstance().write("F5");
         }
     }
 
@@ -74,7 +79,9 @@ public class NotiActivity extends BaseActivity {
         public void handleMessage(Message msg) {
             int count = Integer.valueOf(countView.getText().toString());
             if(count <= 0) {
+                sendSMS();
                 Toast.makeText(NotiActivity.this, "Boom!", Toast.LENGTH_SHORT).show();
+                CrackerManager.getInstance().write("F6");
                 return;
             }
             sendEmptyMessageDelayed(0, 1000);
@@ -106,6 +113,28 @@ public class NotiActivity extends BaseActivity {
             }
         }
     };
+
+    private void sendSMS() {
+        if(preferenceUtil == null) {
+            preferenceUtil = new PreferenceUtil(this);
+        }
+        String phone01 = preferenceUtil.getPrefStringValue(PreferenceUtil.PREF_PHONE_NUMBER_01, NotiActivity.DEFAULT_PHONE_NUMBER);
+        String phone02 = preferenceUtil.getPrefStringValue(PreferenceUtil.PREF_PHONE_NUMBER_02, NotiActivity.DEFAULT_PHONE_NUMBER);
+        String phone03 = preferenceUtil.getPrefStringValue(PreferenceUtil.PREF_PHONE_NUMBER_03, NotiActivity.DEFAULT_PHONE_NUMBER);
+
+        String defaultSendMessage = "긴급상황 도움요청이 왔습니다! MANTLE에 의해 발송";
+        SmsManager smsManager = SmsManager.getDefault();
+
+        if(!DEFAULT_PHONE_NUMBER.equals(phone01)) {
+            smsManager.sendTextMessage(phone01, null, defaultSendMessage, null, null);
+        }
+        if(!DEFAULT_PHONE_NUMBER.equals(phone02)) {
+            smsManager.sendTextMessage(phone02, null, defaultSendMessage, null, null);
+        }
+        if(!DEFAULT_PHONE_NUMBER.equals(phone03)) {
+            smsManager.sendTextMessage(phone03, null, defaultSendMessage, null, null);
+        }
+    }
 
     private void saveCount(int count) {
         if(preferenceUtil != null) {

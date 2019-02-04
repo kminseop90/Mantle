@@ -69,6 +69,7 @@ public class MainActivity extends BaseActivity {
                 return true;
             }
         });
+
         bottomNavigationView.setSelectedItemId(R.id.bottom_bar_status);
 //        switchFragment(statusFragment, FRAGMENT_TAG_STATUS);
     }
@@ -92,11 +93,5 @@ public class MainActivity extends BaseActivity {
         }
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .commit();
-    }
-
-    @Override
-    protected void onStop() {
-        CrackerManager.getInstance().disconnect();
-        super.onStop();
     }
 }

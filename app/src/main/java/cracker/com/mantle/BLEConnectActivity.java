@@ -3,13 +3,17 @@ package cracker.com.mantle;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Looper;
+import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
@@ -19,11 +23,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import cracker.com.mantle.dialog.CheckDialog;
-import cracker.com.mantle.service.ConnectListener;
-import cracker.com.mantle.service.CrackerManager;
-
-public class BLEConnectActivity extends BaseActivity implements View.OnClickListener, ConnectListener{
+public class BLEConnectActivity extends BaseActivity implements View.OnClickListener{
 
     public static final String TAG = BLEConnectActivity.class.getSimpleName();
     public static final String DEVICE_NAME = "CRACKER1";
@@ -34,9 +34,7 @@ public class BLEConnectActivity extends BaseActivity implements View.OnClickList
     private BluetoothAdapter bluetoothAdapter;
     private Handler handler;
 
-    private boolean isFirst = true;
     boolean isScanFinish = false;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -111,54 +109,12 @@ public class BLEConnectActivity extends BaseActivity implements View.OnClickList
                 if (device.getName().equals(DEVICE_NAME)) {
                     isScanFinish = true;
                     bluetoothAdapter.stopLeScan(scanCallback);
-                    CrackerManager.getInstance().setConnectListener(BLEConnectActivity.this);
-                    CrackerManager.getInstance().connect(BLEConnectActivity.this, device.getAddress());
+
+                    Toast.makeText(BLEConnectActivity.this, "기기를 찾았습니다.", Toast.LENGTH_SHORT).show();
+                    connect(device.getAddress());
                 }
             }
         }
     };
 
-
-    private void showConnectComplete() {
-        CheckDialog connectCompleteDialog = new CheckDialog();
-        connectCompleteDialog.setMessage("디바이스와 연결이 완료되었습니다.\n헬멧 착용 후 다음 버튼을 눌러주세요");
-        connectCompleteDialog.setOnNextClick(new CheckDialog.OnNextClick() {
-            @Override
-            public void onNextClick(CheckDialog dialog) {
-                dialog.dismissAllowingStateLoss();
-                startActivity(new Intent(BLEConnectActivity.this, DeviceActivity.class));
-                finish();
-            }
-        });
-        connectCompleteDialog.show(getSupportFragmentManager(), CheckDialog.TAG);
-    }
-
-    @Override
-    protected void onStop() {
-        CrackerManager.getInstance().setConnectListener(null);
-        super.onStop();
-    }
-
-    @Override
-    public void onServiceDiscovered() {
-        showConnectComplete();
-    }
-
-    @Override
-    public void onConnectFailed(final String address) {
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-                AlertDialog.Builder builder = new AlertDialog.Builder(BLEConnectActivity.this);
-                builder.setMessage("연결이 실패하였습니다, 다시 시도할까요?");
-                builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        CrackerManager.getInstance().connect(BLEConnectActivity.this, address);
-                    }
-                });
-                builder.show();
-            }
-        });
-    }
 }

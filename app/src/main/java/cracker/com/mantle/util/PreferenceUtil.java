@@ -11,6 +11,9 @@ public class PreferenceUtil {
     public static final String PREF_PHONE_NUMBER_02 = "PREF_PHONE_NUMBER_02";
     public static final String PREF_PHONE_NUMBER_03 = "PREF_PHONE_NUMBER_03";
     public static final String PREF_EMERGENCY_COUNT = "PREF_EMERGENCY_COUNT";
+    public static final String PREF_TYPE = "PREF_TYPE";
+    public static final String PREF_SENSOR_RIGHT = "PREF_SENSOR_RIGHT";
+    public static final String PREF_SENSOR_LEFT = "PREF_SENSOR_LEFT";
 
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
@@ -30,11 +33,13 @@ public class PreferenceUtil {
         editor.commit();
     }
 
-    public String getPrefStringValue(String key) {
-        return sharedPreferences.getString(key, "010-0000-0000");
+    public String getPrefStringValue(String key, String defaultString) {
+        return sharedPreferences.getString(key, defaultString);
     }
 
     public int getPrefIntValue(String key) {
         return sharedPreferences.getInt(key, 70);
     }
+
+
 }

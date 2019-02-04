@@ -46,9 +46,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
         phoneNumber03View = parentView.findViewById(R.id.txt_setting_phone_number_03);
 
         phonePreferenceUtil = new PreferenceUtil(getContext());
-        phoneNumber01View.setText(phonePreferenceUtil.getPrefStringValue(PreferenceUtil.PREF_PHONE_NUMBER_01));
-        phoneNumber02View.setText(phonePreferenceUtil.getPrefStringValue(PreferenceUtil.PREF_PHONE_NUMBER_02));
-        phoneNumber03View.setText(phonePreferenceUtil.getPrefStringValue(PreferenceUtil.PREF_PHONE_NUMBER_03));
+        phoneNumber01View.setText(phonePreferenceUtil.getPrefStringValue(PreferenceUtil.PREF_PHONE_NUMBER_01, NotiActivity.DEFAULT_PHONE_NUMBER));
+        phoneNumber02View.setText(phonePreferenceUtil.getPrefStringValue(PreferenceUtil.PREF_PHONE_NUMBER_02, NotiActivity.DEFAULT_PHONE_NUMBER));
+        phoneNumber03View.setText(phonePreferenceUtil.getPrefStringValue(PreferenceUtil.PREF_PHONE_NUMBER_03, NotiActivity.DEFAULT_PHONE_NUMBER));
     }
 
     private void showPhoneNumberEditDialog(final int id) {
