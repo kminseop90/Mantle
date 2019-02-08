@@ -1,6 +1,8 @@
 package cracker.com.mantle.fragment;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -8,6 +10,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -56,10 +59,26 @@ public class CalendarFragment extends Fragment implements LocationListener {
 
         todayView.setText(String.format("%d월%d일", month, day));
 
-
-        requestAddress();
-//        addressView.setText(getAddress());
+        double latitude = Double.parseDouble(getLocation().split(",")[0]);
+        double longitude = Double.parseDouble(getLocation().split(",")[1]);
+        addressView.setText(getAddress(latitude, longitude));
     }
+
+
+    public String getLocation() {
+        LocationManager lm = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return "";
+        }
+        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+        double longitude = location.getLongitude();
+        double latitude = location.getLatitude();
+
+        String strLoc = String.valueOf(latitude) + "," + String.valueOf(longitude);
+        return strLoc;
+    }
+
 
     private void requestAddress() {
         try {

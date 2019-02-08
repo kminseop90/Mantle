@@ -16,7 +16,6 @@ import android.util.Log;
 import cracker.com.mantle.dialog.CheckDialog;
 import cracker.com.mantle.service.BLEService;
 import cracker.com.mantle.service.CrackerManager;
-import cracker.com.mantle.service.DataStreamListener;
 
 public class BaseActivity extends AppCompatActivity {
     public static final String TAG = BaseActivity.class.getSimpleName();
@@ -46,7 +45,7 @@ public class BaseActivity extends AppCompatActivity {
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
-                    if(BaseActivity.this != null) {
+                    try {
                         AlertDialog.Builder builder = new AlertDialog.Builder(BaseActivity.this);
                         builder.setMessage("연결이 실패하였습니다, 다시 시도할까요?");
                         builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
@@ -56,6 +55,8 @@ public class BaseActivity extends AppCompatActivity {
                             }
                         });
                         builder.show();
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
             });

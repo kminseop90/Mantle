@@ -23,6 +23,7 @@ public class CheckDialog extends AppCompatDialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_check, container, false);
+        setStyle(AppCompatDialogFragment.STYLE_NO_FRAME, android.R.style.Theme_Translucent);
 
         messageView = view.findViewById(R.id.text_check_message);
         messageView.setText(message);
@@ -36,6 +37,12 @@ public class CheckDialog extends AppCompatDialogFragment {
             }
         });
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        getDialog().getWindow().setBackgroundDrawableResource(android.R.color.transparent);
     }
 
     public void setMessage(String message) {

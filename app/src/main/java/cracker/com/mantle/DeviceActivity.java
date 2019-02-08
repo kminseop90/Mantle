@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -127,7 +128,14 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     public void onDataReceive(String msg) {
-        leftEditBox.setText(msg);
-        rightEditBox.setText(msg);
+        //00 00 00 00 00 00
+        if(TextUtils.isEmpty(msg)) return;
+
+        String[] splitMsg = msg.split(" ");
+        if(splitMsg.length >= 3) {
+            String displayMsg = String.format("%s\n%s\n%s", splitMsg[0], splitMsg[1], splitMsg[2]);
+            leftEditBox.setText(displayMsg);
+            rightEditBox.setText(displayMsg);
+        }
     }
 }

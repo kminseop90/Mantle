@@ -1,11 +1,16 @@
 package cracker.com.mantle;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.telephony.SmsManager;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -35,11 +40,10 @@ public class NotiActivity extends BaseActivity {
 
         initializeViews();
         initializeData();
-        isEmergency = true;
         if(isEmergency) {
             initializeEmergency();
             startTimer();
-            CrackerManager.getInstance().write("F5");
+            CrackerManager.getInstance().write("F3");
         }
     }
 
@@ -81,7 +85,7 @@ public class NotiActivity extends BaseActivity {
             if(count <= 0) {
                 sendSMS();
                 Toast.makeText(NotiActivity.this, "Boom!", Toast.LENGTH_SHORT).show();
-                CrackerManager.getInstance().write("F6");
+                CrackerManager.getInstance().write("F4");
                 return;
             }
             sendEmptyMessageDelayed(0, 1000);
@@ -122,18 +126,36 @@ public class NotiActivity extends BaseActivity {
         String phone02 = preferenceUtil.getPrefStringValue(PreferenceUtil.PREF_PHONE_NUMBER_02, NotiActivity.DEFAULT_PHONE_NUMBER);
         String phone03 = preferenceUtil.getPrefStringValue(PreferenceUtil.PREF_PHONE_NUMBER_03, NotiActivity.DEFAULT_PHONE_NUMBER);
 
-        String defaultSendMessage = "긴급상황 도움요청이 왔습니다! MANTLE에 의해 발송";
+        String googleMapBaseUrl = "https://map.google.com/maps/@%s,17z";
+        String googleMapUrl = String.format(googleMapBaseUrl, getLocation());
+
+        String defaultSendMessage = "긴급상황 도움요청이 왔습니다! MANTLE에 의해 발송 ";
+
         SmsManager smsManager = SmsManager.getDefault();
 
         if(!DEFAULT_PHONE_NUMBER.equals(phone01)) {
-            smsManager.sendTextMessage(phone01, null, defaultSendMessage, null, null);
+            smsManager.sendTextMessage(phone01, null, googleMapUrl, null, null);
         }
         if(!DEFAULT_PHONE_NUMBER.equals(phone02)) {
-            smsManager.sendTextMessage(phone02, null, defaultSendMessage, null, null);
+            smsManager.sendTextMessage(phone02, null, googleMapUrl, null, null);
         }
         if(!DEFAULT_PHONE_NUMBER.equals(phone03)) {
-            smsManager.sendTextMessage(phone03, null, defaultSendMessage, null, null);
+            smsManager.sendTextMessage(phone03, null, googleMapUrl, null, null);
         }
+    }
+
+    public String getLocation() {
+        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return "";
+        }
+        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+        double longitude = location.getLongitude();
+        double latitude = location.getLatitude();
+
+        String strLoc = String.valueOf(latitude) + "," + String.valueOf(longitude);
+        return strLoc;
     }
 
     private void saveCount(int count) {
