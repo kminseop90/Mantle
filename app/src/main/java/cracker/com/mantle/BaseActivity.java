@@ -69,7 +69,6 @@ public class BaseActivity extends AppCompatActivity {
                         });
                         builder.show();
                     } catch (Exception e) {
-                        stopServiceBind();
                         e.printStackTrace();
                     }
                 }
