@@ -125,6 +125,7 @@ public class BLEService extends Service implements ConnectListener, DataStreamLi
         if(isEmergency(msg)) {
             Intent intent = new Intent(this, NotiActivity.class);
             intent.putExtra(NotiActivity.TYPE_EMERGENCY, true);
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
         }
     }
@@ -143,13 +144,6 @@ public class BLEService extends Service implements ConnectListener, DataStreamLi
             return false;
         }
     }
-
-
-    private void startEmergencyActivity() {
-
-    }
-
-    private long time = 100;
 
     private void initFileSave() {
         String dirPath = "sdcard/Mantle";

@@ -8,15 +8,18 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.PowerManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.telephony.SmsManager;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import cracker.com.mantle.service.CrackerManager;
+import cracker.com.mantle.util.AlarmWakeLock;
 import cracker.com.mantle.util.PreferenceUtil;
 
 public class NotiActivity extends BaseActivity {
@@ -28,11 +31,14 @@ public class NotiActivity extends BaseActivity {
     private TextView countView;
     private ImageView saveView;
     private boolean isEmergency = false;
+    private PowerManager powerManager;
+    private PowerManager.WakeLock wakeLock;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_noti);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
 
         if(getIntent() != null) {
             isEmergency = getIntent().getBooleanExtra(TYPE_EMERGENCY, false);
@@ -72,6 +78,8 @@ public class NotiActivity extends BaseActivity {
 
         ((TextView)findViewById(R.id.text_noti_message_01)).setText("숫자 카운팅이 끝나면 초기\n등록한 서브 번호로 사고 발생\n알림 메시지가 전송됩니다.");
         ((TextView)findViewById(R.id.text_noti_message_02)).setVisibility(View.GONE);
+
+        AlarmWakeLock.wakeLock(this);
     }
 
     private void startTimer() {
@@ -108,6 +116,7 @@ public class NotiActivity extends BaseActivity {
                     break;
                 case R.id.button_noti_save:
                     if(isEmergency) {
+                        CrackerManager.getInstance().write("F4");
                         timer.removeMessages(0);
                     } else {
                         saveCount(count);
