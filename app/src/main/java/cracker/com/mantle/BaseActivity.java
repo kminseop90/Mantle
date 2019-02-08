@@ -19,13 +19,26 @@ import cracker.com.mantle.service.CrackerManager;
 
 public class BaseActivity extends AppCompatActivity {
     public static final String TAG = BaseActivity.class.getSimpleName();
+    RemoteService remoteService;
 
-    protected void connect(String address) {
-        try {
-            remoteService.connect(address);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+    private void showConnectComplete() {
+        CheckDialog connectCompleteDialog = new CheckDialog();
+        connectCompleteDialog.setMessage("디바이스와 연결이 완료되었습니다.\n헬멧 착용 후 다음 버튼을 눌러주세요");
+        connectCompleteDialog.setOnNextClick(new CheckDialog.OnNextClick() {
+            @Override
+            public void onNextClick(CheckDialog dialog) {
+                dialog.dismissAllowingStateLoss();
+                startActivity(new Intent(BaseActivity.this, DeviceActivity.class));
+                finish();
+
+                try {
+                    remoteService.readGyro();
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        connectCompleteDialog.show(getSupportFragmentManager(), CheckDialog.TAG);
     }
 
     RemoteServiceCallback remoteServiceCallback = new RemoteServiceCallback.Stub() {
@@ -56,14 +69,13 @@ public class BaseActivity extends AppCompatActivity {
                         });
                         builder.show();
                     } catch (Exception e) {
+                        stopServiceBind();
                         e.printStackTrace();
                     }
                 }
             });
         }
     };
-
-    RemoteService remoteService;
     ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
@@ -89,27 +101,6 @@ public class BaseActivity extends AppCompatActivity {
         }
     };
 
-
-    private void showConnectComplete() {
-        CheckDialog connectCompleteDialog = new CheckDialog();
-        connectCompleteDialog.setMessage("디바이스와 연결이 완료되었습니다.\n헬멧 착용 후 다음 버튼을 눌러주세요");
-        connectCompleteDialog.setOnNextClick(new CheckDialog.OnNextClick() {
-            @Override
-            public void onNextClick(CheckDialog dialog) {
-                dialog.dismissAllowingStateLoss();
-                startActivity(new Intent(BaseActivity.this, DeviceActivity.class));
-                finish();
-
-                try {
-                    remoteService.readGyro();
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        connectCompleteDialog.show(getSupportFragmentManager(), CheckDialog.TAG);
-    }
-
     private void startServiceBind() {
         Intent intent = new Intent(this, BLEService.class);
 
@@ -121,8 +112,6 @@ public class BaseActivity extends AppCompatActivity {
         unbindService(connection);
         stopService(new Intent(this, BLEService.class));
     }
-
-
 
     @Override
     protected void onResume() {

@@ -108,7 +108,7 @@ public class NotiActivity extends BaseActivity {
                     break;
                 case R.id.button_noti_save:
                     if(isEmergency) {
-                        timer.removeCallbacks(null);
+                        timer.removeMessages(0);
                     } else {
                         saveCount(count);
                     }

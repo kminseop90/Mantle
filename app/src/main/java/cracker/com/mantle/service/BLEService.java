@@ -122,13 +122,30 @@ public class BLEService extends Service implements ConnectListener, DataStreamLi
         saveDataAtFile(msg);
         callbacks.finishBroadcast();
 
-        time--;
-        Log.d(TAG, "onDataReceive: " + time);
-        Intent intent = new Intent(this, NotiActivity.class);
-        intent.putExtra(NotiActivity.TYPE_EMERGENCY, true);
-        if(time == 0) {
+        if(isEmergency(msg)) {
+            Intent intent = new Intent(this, NotiActivity.class);
+            intent.putExtra(NotiActivity.TYPE_EMERGENCY, true);
             startActivity(intent);
         }
+    }
+
+    private boolean isEmergency(String msg) {
+        try {
+            String[] splitMsg = msg.split(" ");
+            int accelerationX = Math.abs(Integer.valueOf(splitMsg[3]));
+            int accelerationY = Math.abs(Integer.valueOf(splitMsg[4]));
+            int accelerationZ = Math.abs(Integer.valueOf(splitMsg[5]));
+
+            int sum = accelerationX + accelerationY + accelerationZ;
+            Log.d(TAG, "isEmergency: " + sum);
+            return sum >= 200;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+
+    private void startEmergencyActivity() {
 
     }
 

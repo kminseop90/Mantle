@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
@@ -115,4 +116,12 @@ public class BLEConnectActivity extends BaseActivity implements View.OnClickList
         }
     };
 
+
+    protected void connect(String address) {
+        try {
+            remoteService.connect(address);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
 }
