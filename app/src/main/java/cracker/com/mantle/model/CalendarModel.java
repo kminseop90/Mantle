@@ -6,11 +6,30 @@ import java.util.Calendar;
 
 public class CalendarModel {
 
+
+    private int year;
+    private int month;
     private int day;
     private int dayOfWeek;
     private boolean isAttend;
     private boolean isToday;
     private boolean isDayInThisMonth;
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public int getMonth() {
+        return month;
+    }
+
+    public void setMonth(int month) {
+        this.month = month;
+    }
 
     public boolean isAttend() {
         return isAttend;
@@ -71,6 +90,14 @@ public class CalendarModel {
                 emptyData.setToday(false);
                 emptyData.setDayInThisMonth(false);
                 emptyData.setAttend(false);
+                if(month == 1) {
+                    emptyData.setMonth(12);
+                    emptyData.setYear(--year);
+                } else {
+                    emptyData.setMonth(month);
+                    emptyData.setYear(year);
+                }
+
                 calendars.add(emptyData);
             }
         }
@@ -84,6 +111,8 @@ public class CalendarModel {
             dayInfo.setDayOfWeek(startDayOfWeek++);
             dayInfo.setToday(isToday(year, month, i));
             dayInfo.setDayInThisMonth(true);
+            dayInfo.setYear(year);
+            dayInfo.setMonth(month);
             calendars.add(dayInfo);
         }
 
@@ -96,6 +125,13 @@ public class CalendarModel {
             emptyData.setDayInThisMonth(false);
             emptyData.setToday(false);
             emptyData.setAttend(false);
+            if(month == 12) {
+                emptyData.setMonth(1);
+                emptyData.setYear(++year);
+            } else {
+                emptyData.setMonth(month);
+                emptyData.setYear(year);
+            }
             calendars.add(emptyData);
             startDayOfWeek++;
             nextMonthDay++;

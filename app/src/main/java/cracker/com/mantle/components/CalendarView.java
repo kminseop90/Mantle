@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Calendar;
 
@@ -16,7 +17,7 @@ import cracker.com.mantle.R;
 import cracker.com.mantle.adapter.CalendarAdapter;
 import cracker.com.mantle.model.CalendarModel;
 
-public class CalendarView extends RelativeLayout implements View.OnClickListener {
+public class CalendarView extends RelativeLayout implements View.OnClickListener, CalendarAdapter.OnCalendarAdapterItemClick {
 
 
     private TextView dateView;
@@ -52,7 +53,8 @@ public class CalendarView extends RelativeLayout implements View.OnClickListener
         nextView = view.findViewById(R.id.icon_calendar_next);
         calendarView = view.findViewById(R.id.list_calendar);
         calendarView.setLayoutManager(new GridLayoutManager(getContext(), 7));
-        calendarView.setAdapter(new CalendarAdapter());
+        calendarView.setAdapter(new CalendarAdapter(this));
+
 
         currentYearMonth = String.format("%04d%02d", Calendar.getInstance().get(Calendar.YEAR), (Calendar.getInstance().get(Calendar.MONTH) + 1));
         String dateText = String.format("%s %d", getMonth(Integer.parseInt(currentYearMonth.substring(4,6))), Integer.parseInt(currentYearMonth.substring(0,4)));
@@ -116,5 +118,12 @@ public class CalendarView extends RelativeLayout implements View.OnClickListener
                 onPrevClick();
                 break;
         }
+    }
+
+    @Override
+    public void onCalendarAdapterItemClick(CalendarModel calendarModel) {
+        int year = calendarModel.getYear(); int month = calendarModel.getMonth(); int day = calendarModel.getDay();
+
+        Toast.makeText(getContext(), String.format("%d년%d월%d일", year, month, day), Toast.LENGTH_SHORT).show();
     }
 }

@@ -12,9 +12,14 @@ import java.util.Calendar;
 import cracker.com.mantle.R;
 import cracker.com.mantle.model.CalendarModel;
 
-public class CalendarAdapter extends RecyclerView.Adapter<CalendarViewHolder> {
+public class CalendarAdapter extends RecyclerView.Adapter<CalendarViewHolder> implements CalendarViewHolder.OnCalendarItemClick {
 
     private ArrayList<CalendarModel> items = new ArrayList<>();
+    private OnCalendarAdapterItemClick onCalendarAdapterItemClick;
+
+    public CalendarAdapter(OnCalendarAdapterItemClick onCalendarAdapterItemClick) {
+        this.onCalendarAdapterItemClick = onCalendarAdapterItemClick;
+    }
 
     public void setData(ArrayList<CalendarModel> items) {
         this.items.clear();
@@ -25,38 +30,34 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarViewHolder> {
     @Override
     public CalendarViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_holder_day, parent, false);
-        return new CalendarViewHolder(view);
+        CalendarViewHolder calendarViewHolder = new CalendarViewHolder(view);
+        calendarViewHolder.setOnCalendarItemClick(this);
+        return calendarViewHolder;
     }
 
     @Override
     public void onBindViewHolder(CalendarViewHolder holder, int position) {
         CalendarModel item = items.get(position);
-
-        if (item != null) {
-            if (!item.isDayInThisMonth()) {
-                holder.dayView.setVisibility(View.GONE);
-            } else {
-                holder.dayView.setVisibility(View.VISIBLE);
-                holder.dayView.setText(item.getDay() + "");
-                /*if (item.isToday()) {
-                    holder.checkView.setVisibility(View.VISIBLE);
-                } else {
-                    holder.checkView.setVisibility(View.GONE);
-                }*/
-
-                if (item.getDayOfWeek() == Calendar.SUNDAY) {
-                    holder.dayView.setTextColor(Color.parseColor("#d41616"));
-                } else if (item.getDayOfWeek() == Calendar.SATURDAY) {
-                    holder.dayView.setTextColor(Color.parseColor("#0072dc"));
-                } else {
-                    holder.dayView.setTextColor(Color.parseColor("#000000"));
-                }
-            }
-        }
+        holder.bindView(item);
     }
 
     @Override
     public int getItemCount() {
         return items.size();
+    }
+
+    @Override
+    public void onCalendarItemClick(CalendarModel calendarModel) {
+        if(onCalendarAdapterItemClick != null) {
+            onCalendarAdapterItemClick.onCalendarAdapterItemClick(calendarModel);
+        }
+    }
+
+    public void setOnCalendarAdapterItemClick(OnCalendarAdapterItemClick onCalendarAdapterItemClick) {
+        this.onCalendarAdapterItemClick = onCalendarAdapterItemClick;
+    }
+
+    public interface OnCalendarAdapterItemClick {
+        void onCalendarAdapterItemClick(CalendarModel calendarModel);
     }
 }
