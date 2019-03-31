@@ -1,38 +1,35 @@
 package cracker.com.mantle;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.ViewFlipper;
 
-import cracker.com.mantle.components.EditBox;
+import cracker.com.mantle.components.DeviceSettingStep01;
+import cracker.com.mantle.components.DeviceSettingStep02;
+import cracker.com.mantle.components.DeviceSettingStep03;
+import cracker.com.mantle.components.DeviceSettingStep04;
+import cracker.com.mantle.components.DeviceSettingStep05;
+import cracker.com.mantle.components.OnNextStepListener;
+import cracker.com.mantle.components.OnStartStepListener;
 import cracker.com.mantle.dialog.CheckDialog;
 import cracker.com.mantle.service.CrackerManager;
 import cracker.com.mantle.service.DataStreamListener;
+import cracker.com.mantle.util.PreferenceUtil;
 
-public class DeviceActivity extends BaseActivity implements View.OnClickListener, DataStreamListener {
+public class DeviceActivity extends BaseActivity implements DataStreamListener {
 
-    public static final int STEP_01 = 1;
-    public static final int STEP_02 = 2;
-    public static final int STEP_03 = 3;
-    public static final int STEP_04 = 4;
+    private ViewFlipper viewFlipper;
+    private DeviceSettingStep01 deviceSettingStep01;
+    private DeviceSettingStep02 deviceSettingStep02;
+    private DeviceSettingStep03 deviceSettingStep03;
+    private DeviceSettingStep04 deviceSettingStep04;
+    private DeviceSettingStep05 deviceSettingStep05;
 
-    private int currentStep = STEP_01;
-
-    private RelativeLayout step01Layout;
-    private RelativeLayout step02Layout;
-    private RelativeLayout step03Layout;
-    private RelativeLayout step04Layout;
-
-    private EditBox leftEditBox;
-    private EditBox rightEditBox;
-
-    private ImageView saveView;
     private boolean isSettingFlag = false;
+    private PreferenceUtil preferenceUtil;
+    private String value;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,83 +39,86 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
             isSettingFlag = getIntent().getBooleanExtra("flag", false);
         }
 
-        step01Layout = findViewById(R.id.layout_device_step_01);
-        step02Layout = findViewById(R.id.layout_device_step_02);
-        step03Layout = findViewById(R.id.layout_device_step_03);
-        step04Layout = findViewById(R.id.layout_device_step_04);
+        preferenceUtil = new PreferenceUtil(this);
 
-        leftEditBox = findViewById(R.id.view_edit_box_left);
-        rightEditBox = findViewById(R.id.view_edit_box_right);
+        viewFlipper = findViewById(R.id.view_device_flipper);
+        deviceSettingStep01 = findViewById(R.id.view_device_setting_01);
+        deviceSettingStep02 = findViewById(R.id.view_device_setting_02);
+        deviceSettingStep03 = findViewById(R.id.view_device_setting_03);
+        deviceSettingStep04 = findViewById(R.id.view_device_setting_04);
+        deviceSettingStep05 = findViewById(R.id.view_device_setting_05);
 
-        saveView = findViewById(R.id.btn_device_next);
-        saveView.setOnClickListener(this);
+        deviceSettingStep01.setOnNextClick(new OnNextStepListener() {
+            @Override
+            public void onNextClick() {
+                viewFlipper.showNext();
+            }
+        });
+
+        deviceSettingStep02.setOnNextClick(new OnNextStepListener() {
+            @Override
+            public void onNextClick() {
+                preferenceUtil.setPrefValue(PreferenceUtil.PREF_DEFAULT_SENSOR_VALUE, value);
+                viewFlipper.showNext();
+            }
+        });
+
+        deviceSettingStep03.setOnNextClick(new OnNextStepListener() {
+            @Override
+            public void onNextClick() {
+                showSettingCompleteDialog(new CheckDialog.OnNextClick() {
+                    @Override
+                    public void onNextClick(CheckDialog dialog) {
+                        preferenceUtil.setPrefValue(PreferenceUtil.PREF_LEFT_SENSOR_VALUE, value);
+                        dialog.dismissAllowingStateLoss();
+                        viewFlipper.showNext();
+                    }
+                });
+
+            }
+        });
+
+        deviceSettingStep04.setOnNextClick(new OnNextStepListener() {
+            @Override
+            public void onNextClick() {
+                showSettingCompleteDialog(new CheckDialog.OnNextClick() {
+                    @Override
+                    public void onNextClick(CheckDialog dialog) {
+                        preferenceUtil.setPrefValue(PreferenceUtil.PREF_RIGHT_SENSOR_VALUE, value);
+                        dialog.dismissAllowingStateLoss();
+                        viewFlipper.showNext();
+                    }
+                });
+            }
+        });
+
+        deviceSettingStep05.setOnNextClick(new OnNextStepListener() {
+            @Override
+            public void onNextClick() {
+                viewFlipper.showNext();
+            }
+        });
+
+        deviceSettingStep05.setOnStartStepListener(new OnStartStepListener() {
+            @Override
+            public void onStartClick() {
+                if(!isSettingFlag) {
+                    startActivity(new Intent(DeviceActivity.this, MainActivity.class));
+                }
+                finish();
+            }
+        });
+
         CrackerManager.getInstance().addDataStreamListeners(this);
     }
 
-
-    private void nextClick() {
-        switch (currentStep) {
-            case STEP_01:
-                // 자전거 준비
-                saveView.setImageResource(R.drawable.button_next);
-                step01Layout.setVisibility(View.GONE);
-                step02Layout.setVisibility(View.VISIBLE);
-                step03Layout.setVisibility(View.GONE);
-                step04Layout.setVisibility(View.GONE);
-                break;
-            case STEP_02:
-                // 왼쪽 측정
-                saveView.setImageResource(R.drawable.button_save);
-                step01Layout.setVisibility(View.GONE);
-                step02Layout.setVisibility(View.GONE);
-                step03Layout.setVisibility(View.VISIBLE);
-                step04Layout.setVisibility(View.GONE);
-                break;
-            case STEP_03:
-                // 오른쪽 측정
-                CheckDialog setting01CompleteDialog = new CheckDialog();
-                setting01CompleteDialog.setMessage("설정이 저장되었습니다.");
-                setting01CompleteDialog.setOnNextClick(new CheckDialog.OnNextClick() {
-                    @Override
-                    public void onNextClick(CheckDialog dialog) {
-                        dialog.dismissAllowingStateLoss();
-                        step01Layout.setVisibility(View.GONE);
-                        step02Layout.setVisibility(View.GONE);
-                        step03Layout.setVisibility(View.GONE);
-                        step04Layout.setVisibility(View.VISIBLE);
-                    }
-                });
-                setting01CompleteDialog.show(getSupportFragmentManager(), CheckDialog.TAG);
-                break;
-            case STEP_04:
-                CheckDialog setting02CompleteDialog = new CheckDialog();
-                setting02CompleteDialog.setMessage("설정이 저장되었습니다.");
-                setting02CompleteDialog.setOnNextClick(new CheckDialog.OnNextClick() {
-                    @Override
-                    public void onNextClick(CheckDialog dialog) {
-                        dialog.dismissAllowingStateLoss();
-                        if(!isSettingFlag) {
-                            startActivity(new Intent(DeviceActivity.this, MainActivity.class));
-                        }
-                        finish();
-                    }
-                });
-                setting02CompleteDialog.show(getSupportFragmentManager(), CheckDialog.TAG);
-                break;
-        }
-        currentStep++;
+    private void showSettingCompleteDialog(CheckDialog.OnNextClick onNextClick) {
+        CheckDialog setting02CompleteDialog = new CheckDialog();
+        setting02CompleteDialog.setMessage("설정이 저장되었습니다.");
+        setting02CompleteDialog.setOnNextClick(onNextClick);
+        setting02CompleteDialog.show(getSupportFragmentManager(), CheckDialog.TAG);
     }
 
-
-    @Override
-    public void onClick(View view) {
-        int id = view.getId();
-        switch (id) {
-            case R.id.btn_device_next:
-                nextClick();
-                break;
-        }
-    }
 
     @Override
     protected void onStop() {
@@ -130,12 +130,12 @@ public class DeviceActivity extends BaseActivity implements View.OnClickListener
     public void onDataReceive(String msg) {
         //00 00 00 00 00 00
         if(TextUtils.isEmpty(msg)) return;
-
         String[] splitMsg = msg.split(" ");
         if(splitMsg.length >= 3) {
             String displayMsg = String.format("%s\n%s\n%s", splitMsg[0], splitMsg[1], splitMsg[2]);
-            leftEditBox.setText(displayMsg);
-            rightEditBox.setText(displayMsg);
+            this.value = String.format("%s,%s,%s", splitMsg[0], splitMsg[1], splitMsg[2]);
+            deviceSettingStep03.setData(displayMsg);
+            deviceSettingStep04.setData(displayMsg);
         }
     }
 }

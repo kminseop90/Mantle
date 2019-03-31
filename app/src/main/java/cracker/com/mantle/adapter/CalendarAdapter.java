@@ -1,13 +1,11 @@
 package cracker.com.mantle.adapter;
 
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import cracker.com.mantle.R;
 import cracker.com.mantle.model.CalendarModel;
@@ -48,7 +46,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarViewHolder> im
 
     @Override
     public void onCalendarItemClick(CalendarModel calendarModel) {
-        if(onCalendarAdapterItemClick != null) {
+        if(onCalendarAdapterItemClick != null && calendarModel.isDayInThisMonth()) {
             onCalendarAdapterItemClick.onCalendarAdapterItemClick(calendarModel);
         }
     }

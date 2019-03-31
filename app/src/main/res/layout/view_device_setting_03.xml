@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/image_device_setting_03"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/helmet_head_l" />
+
+    <cracker.com.mantle.components.EditBox
+        android:id="@+id/view_edit_box_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="135dp"
+        android:clipChildren="false" />
+
+    <TextView
+        android:id="@+id/text_device_setting_03"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/image_device_setting_03"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:gravity="center_horizontal"
+        android:lineSpacingExtra="4sp"
+        android:text="정면을 바라 본 상태로 왼쪽으로 고개를 움직인 후 저장하기를 눌러주세요."
+        android:textColor="#7186c7"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+
+    <ImageView
+        android:id="@+id/btn_device_setting_03"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_device_setting_03"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="70dp"
+        android:src="@drawable/button_save" />
+
+
+</RelativeLayout>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <ImageView
+        android:id="@+id/image_device_setting_02"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/img_helmet_head" />
+
+    <TextView
+        android:id="@+id/text_device_setting_02"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/image_device_setting_02"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:gravity="center_horizontal"
+        android:lineSpacingExtra="4sp"
+        android:text="제스처 사용(깜빡이)을 위해 헬멧 착용 후 세팅이 필요합니다. 시작하기를 눌러 진행하세요."
+        android:textColor="#7186c7"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+
+    <ImageView
+        android:id="@+id/btn_device_setting_02"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_device_setting_02"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="70dp"
+        android:src="@drawable/button_next" />
+
+
+
+</RelativeLayout>

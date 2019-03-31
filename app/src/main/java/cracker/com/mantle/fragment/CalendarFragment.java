@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Locale;
 
 import cracker.com.mantle.R;
+import cracker.com.mantle.components.CalendarView;
+import cracker.com.mantle.model.CalendarModel;
 
 public class CalendarFragment extends Fragment implements LocationListener {
     public static final String TAG = CalendarFragment.class.getSimpleName();
@@ -33,6 +35,7 @@ public class CalendarFragment extends Fragment implements LocationListener {
     private TextView todayView;
     private TextView todayDetailView;
     private TextView addressView;
+    private CalendarView calendarView;
     private LocationManager locationManager;
 
     @Nullable
@@ -41,7 +44,7 @@ public class CalendarFragment extends Fragment implements LocationListener {
         View v = inflater.inflate(R.layout.fragment_calendar, container, false);
 
         initializeViews(v);
-        initializeData();
+//        initializeData();
         return v;
     }
 
@@ -49,6 +52,19 @@ public class CalendarFragment extends Fragment implements LocationListener {
         todayView = parent.findViewById(R.id.text_calendar_today_date);
         todayDetailView = parent.findViewById(R.id.text_calendar_date);
         addressView = parent.findViewById(R.id.text_calendar_address);
+        calendarView = parent.findViewById(R.id.view_calendar_list);
+        calendarView.setOnCalendarListener(new CalendarView.OnCalendarListener() {
+            @Override
+            public void onCalendarDayClick(CalendarModel calendarModel) {
+                if(calendarModel != null) {
+                    todayView.setText(String.format("%d월%d일", calendarModel.getMonth(), calendarModel.getDay()));
+                    if(calendarModel.getNoti() != null) {
+                        addressView.setText(getAddress(calendarModel.getNoti().getLatitude(), calendarModel.getNoti().getLongitude()));
+                        todayDetailView.setText(calendarModel.getNoti().getTime());
+                    }
+                }
+            }
+        });
     }
 
 

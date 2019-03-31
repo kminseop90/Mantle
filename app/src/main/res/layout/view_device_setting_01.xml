@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <ImageView
+        android:id="@+id/image_device_setting_01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/img" />
+
+    <TextView
+        android:id="@+id/text_device_setting_01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/image_device_setting_01"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:gravity="center_horizontal"
+        android:lineSpacingExtra="4sp"
+        android:text="자전거에 올라탄채로 다음버튼을 눌러주세요"
+        android:textColor="#7186c7"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+
+    <ImageView
+        android:id="@+id/btn_device_setting_01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_device_setting_01"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="70dp"
+        android:src="@drawable/button_next" />
+
+
+</RelativeLayout>

@@ -108,8 +108,6 @@ public class BLEConnectActivity extends BaseActivity implements View.OnClickList
                 if (device.getName().equals(DEVICE_NAME)) {
                     isScanFinish = true;
                     bluetoothAdapter.stopLeScan(scanCallback);
-
-                    Toast.makeText(BLEConnectActivity.this, "기기를 찾았습니다.", Toast.LENGTH_SHORT).show();
                     connect(device.getAddress());
                 }
             }

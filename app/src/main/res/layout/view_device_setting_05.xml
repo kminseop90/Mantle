@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/image_device_setting_05"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/helmet_head_lr_2" />
+
+    <TextView
+        android:id="@+id/text_device_setting_05"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/image_device_setting_05"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:lineSpacingExtra="5sp"
+        android:text="설정 값 확인을 위해\n좌, 우 고개를 움직여보세요."
+        android:textColor="#7186c7"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/text_device_setting_des_05"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_device_setting_05"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_horizontal"
+        android:lineSpacingExtra="3sp"
+        android:text="다시 설정하고 싶다면, 다시 설정하기를\n이상이 없다면 시작하기를 눌러주세요."
+        android:textColor="#c1cdf3"
+        android:textSize="14sp" />
+
+    <ImageView
+        android:id="@+id/btn_device_setting_re_05"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_device_setting_des_05"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="15dp"
+        android:src="@drawable/button_re" />
+
+    <ImageView
+        android:id="@+id/btn_device_setting_start_05"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn_device_setting_re_05"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:src="@drawable/button_start" />
+
+
+</RelativeLayout>

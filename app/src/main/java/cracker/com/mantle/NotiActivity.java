@@ -18,6 +18,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
+import cracker.com.mantle.model.NotiModel;
 import cracker.com.mantle.service.CrackerManager;
 import cracker.com.mantle.util.AlarmWakeLock;
 import cracker.com.mantle.util.PreferenceUtil;
@@ -50,6 +56,7 @@ public class NotiActivity extends BaseActivity {
             initializeEmergency();
             startTimer();
             CrackerManager.getInstance().write("F3");
+            saveNoti();
         }
     }
 
@@ -135,7 +142,7 @@ public class NotiActivity extends BaseActivity {
         String phone02 = preferenceUtil.getPrefStringValue(PreferenceUtil.PREF_PHONE_NUMBER_02, NotiActivity.DEFAULT_PHONE_NUMBER);
         String phone03 = preferenceUtil.getPrefStringValue(PreferenceUtil.PREF_PHONE_NUMBER_03, NotiActivity.DEFAULT_PHONE_NUMBER);
 
-        String googleMapBaseUrl = "https://map.google.com/maps/@%s,17z";
+        String googleMapBaseUrl = "https://map.google.com/maps/search/?api=1&query=%s";
         String googleMapUrl = String.format(googleMapBaseUrl, getLocation());
 
         String defaultSendMessage = "긴급상황 도움요청이 왔습니다! MANTLE에 의해 발송 ";
@@ -180,5 +187,22 @@ public class NotiActivity extends BaseActivity {
 
     private void setCount(int count) {
         countView.setText(String.format("%03d", count));
+    }
+
+    private void saveNoti() {
+        int year = Calendar.getInstance().get(Calendar.YEAR);
+        int month = Calendar.getInstance().get(Calendar.MONTH) + 1;
+        int day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+
+        NotiModel notiModel = new NotiModel();
+        notiModel.setYear(year + "");
+        notiModel.setMonth(month+ "");
+        notiModel.setDay(day + "");
+        SimpleDateFormat f = new SimpleDateFormat("MM월dd일 a h:mm", Locale.KOREA);
+        notiModel.setTime(f.format(new Date()));
+        notiModel.setLatitude(Double.parseDouble(getLocation().split(",")[0]));
+        notiModel.setLongitude(Double.parseDouble(getLocation().split(",")[1]));
+
+        preferenceUtil.setNotiValue(String.format("%04d%02d%02d", year, month, day), notiModel);
     }
 }

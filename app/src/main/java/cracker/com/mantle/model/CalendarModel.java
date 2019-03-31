@@ -1,11 +1,14 @@
 package cracker.com.mantle.model;
 
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class CalendarModel {
+import cracker.com.mantle.util.PreferenceUtil;
 
+public class CalendarModel {
 
     private int year;
     private int month;
@@ -14,6 +17,15 @@ public class CalendarModel {
     private boolean isAttend;
     private boolean isToday;
     private boolean isDayInThisMonth;
+    private NotiModel noti;
+
+    public NotiModel getNoti() {
+        return noti;
+    }
+
+    public void setNoti(NotiModel noti) {
+        this.noti = noti;
+    }
 
     public int getYear() {
         return year;
@@ -71,7 +83,7 @@ public class CalendarModel {
         isDayInThisMonth = dayInThisMonth;
     }
 
-    public ArrayList<CalendarModel> getData(String yearMonth) {
+    public ArrayList<CalendarModel> getData(Context context, String yearMonth) {
 
         int year = Integer.parseInt(yearMonth.substring(0, 4).trim());
         int month = Integer.parseInt(yearMonth.substring(4, 6).trim());
@@ -113,6 +125,7 @@ public class CalendarModel {
             dayInfo.setDayInThisMonth(true);
             dayInfo.setYear(year);
             dayInfo.setMonth(month);
+            dayInfo.setNoti(context, year, month, i);
             calendars.add(dayInfo);
         }
 
@@ -180,5 +193,13 @@ public class CalendarModel {
         totalLearningTimeArray[1] = minute;
         totalLearningTimeArray[2] = second;
         return totalLearningTimeArray;
+    }
+
+    private void setNoti(Context context, int year, int month, int day) {
+        String yyyyMMdd = String.format("%04d%02d%02d", year, month, day);
+
+        PreferenceUtil preferenceUtil = new PreferenceUtil(context);
+        NotiModel notiModel = preferenceUtil.getNotiValue(yyyyMMdd);
+        this.noti = notiModel;
     }
 }

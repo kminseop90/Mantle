@@ -39,4 +39,12 @@ public class EditBox extends FrameLayout {
             invalidate();
         }
     }
+
+    public String getText() {
+        String value = "";
+        if(sensorValue != null) {
+            value = sensorValue.getText().toString();
+        }
+        return value;
+    }
 }

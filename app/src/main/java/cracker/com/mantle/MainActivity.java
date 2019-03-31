@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
@@ -38,6 +39,17 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
 
         initialize();
+
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(MainActivity.this, NotiActivity.class);
+                intent.putExtra(NotiActivity.TYPE_EMERGENCY, true);
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+            }
+        }, 3000);
     }
 
     private void initialize() {

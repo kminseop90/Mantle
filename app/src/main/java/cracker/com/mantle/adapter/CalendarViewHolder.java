@@ -3,6 +3,7 @@ package cracker.com.mantle.adapter;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.Calendar;
@@ -15,6 +16,7 @@ public class CalendarViewHolder extends RecyclerView.ViewHolder implements View.
 
     private CalendarModel calendar;
     public TextView dayView;
+    public ImageView notiView;
     private OnCalendarItemClick onCalendarItemClick;
 
 
@@ -22,6 +24,7 @@ public class CalendarViewHolder extends RecyclerView.ViewHolder implements View.
         super(itemView);
         itemView.setOnClickListener(this);
         dayView = itemView.findViewById(R.id.holder_day_text);
+        notiView = itemView.findViewById(R.id.image_day_noti);
     }
 
     public void bindView(CalendarModel calendar) {
@@ -33,11 +36,11 @@ public class CalendarViewHolder extends RecyclerView.ViewHolder implements View.
             } else {
                 dayView.setVisibility(View.VISIBLE);
                 dayView.setText(calendar.getDay() + "");
-                /*if (calendar.isToday()) {
-                    holder.checkView.setVisibility(View.VISIBLE);
-                } else {
-                    holder.checkView.setVisibility(View.GONE);
-                }*/
+
+                if(calendar.isDayInThisMonth() && calendar.getNoti() != null) {
+                    notiView.setVisibility(View.VISIBLE);
+                    dayView.setTextColor(Color.WHITE);
+                }
 
                 if (calendar.getDayOfWeek() == Calendar.SUNDAY) {
                     dayView.setTextColor(Color.parseColor("#d41616"));
@@ -52,7 +55,7 @@ public class CalendarViewHolder extends RecyclerView.ViewHolder implements View.
 
     @Override
     public void onClick(View v) {
-        if(onCalendarItemClick != null) {
+        if(onCalendarItemClick != null && calendar.getNoti() != null) {
             onCalendarItemClick.onCalendarItemClick(calendar);
         }
     }
