@@ -112,6 +112,11 @@ public class CalendarView extends RelativeLayout implements View.OnClickListener
         ((CalendarAdapter) calendarView.getAdapter()).setData(new CalendarModel().getData(getContext(), currentYearMonth));
     }
 
+    public void refresh() {
+        ArrayList<CalendarModel> calendarModels = new CalendarModel().getData(getContext(), getYearMonth());
+        ((CalendarAdapter) calendarView.getAdapter()).setData(calendarModels);
+    }
+
     @Override
     public void onClick(View view) {
         int id = view.getId();

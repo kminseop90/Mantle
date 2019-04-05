@@ -12,6 +12,7 @@ import android.os.RemoteException;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Toast;
 
 import cracker.com.mantle.dialog.CheckDialog;
 import cracker.com.mantle.service.BLEService;
@@ -55,24 +56,8 @@ public class BaseActivity extends AppCompatActivity {
 
         @Override
         public void onConnectFailed(final String address) throws RemoteException {
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(BaseActivity.this);
-                        builder.setMessage("연결이 실패하였습니다, 다시 시도할까요?");
-                        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                CrackerManager.getInstance().connect(BaseActivity.this, address);
-                            }
-                        });
-                        builder.show();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
+            //Toast.makeText(getApplicationContext(), "장치와 연결이 끊겼습니다.", Toast.LENGTH_SHORT).show();
+//            CrackerManager.getInstance().connect(BaseActivity.this, address);
         }
     };
     ServiceConnection connection = new ServiceConnection() {

@@ -70,7 +70,7 @@ public class BLEService extends Service implements ConnectListener, DataStreamLi
         public void readGyro() throws RemoteException {
             initFileSave();
             CrackerManager.getInstance().addDataStreamListeners(BLEService.this);
-            CrackerManager.getInstance().readGyro(500);
+            CrackerManager.getInstance().readGyro(300);
         }
     };
 
@@ -122,12 +122,13 @@ public class BLEService extends Service implements ConnectListener, DataStreamLi
         saveDataAtFile(msg);
         callbacks.finishBroadcast();
 
-        if(isEmergency(msg)) {
+  /*      if(isEmergency(msg)) {
             Intent intent = new Intent(this, NotiActivity.class);
             intent.putExtra(NotiActivity.TYPE_EMERGENCY, true);
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
-        }
+
+    }*/
     }
 
     private boolean isEmergency(String msg) {
@@ -138,7 +139,7 @@ public class BLEService extends Service implements ConnectListener, DataStreamLi
             int accelerationZ = Math.abs(Integer.valueOf(splitMsg[5]));
 
             int sum = accelerationX + accelerationY + accelerationZ;
-            Log.d(TAG, "isEmergency: " + sum);
+//            Log.d(TAG, "isEmergency: " + sum);
             return sum >= 200;
         } catch (Exception e) {
             return false;
@@ -188,8 +189,12 @@ public class BLEService extends Service implements ConnectListener, DataStreamLi
         }
         Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-        double longitude = location.getLongitude();
-        double latitude = location.getLatitude();
+        double longitude = 0;
+        double latitude = 0;
+        if(location != null) {
+            longitude = location.getLongitude();
+            latitude = location.getLatitude();
+        }
 
         String strLoc = String.valueOf(latitude) + " " + String.valueOf(longitude) + " ";
         return strLoc;

@@ -109,7 +109,6 @@ public class DeviceActivity extends BaseActivity implements DataStreamListener {
             }
         });
 
-        CrackerManager.getInstance().addDataStreamListeners(this);
     }
 
     private void showSettingCompleteDialog(CheckDialog.OnNextClick onNextClick) {
@@ -127,13 +126,19 @@ public class DeviceActivity extends BaseActivity implements DataStreamListener {
     }
 
     @Override
+    protected void onResume() {
+        CrackerManager.getInstance().addDataStreamListeners(this);
+        super.onResume();
+    }
+
+    @Override
     public void onDataReceive(String msg) {
         //00 00 00 00 00 00
         if(TextUtils.isEmpty(msg)) return;
         String[] splitMsg = msg.split(" ");
-        if(splitMsg.length >= 3) {
-            String displayMsg = String.format("%s\n%s\n%s", splitMsg[0], splitMsg[1], splitMsg[2]);
-            this.value = String.format("%s,%s,%s", splitMsg[0], splitMsg[1], splitMsg[2]);
+        if(splitMsg.length >= 6) {
+            String displayMsg = String.format("%s\n%s\n%s", splitMsg[3], splitMsg[4], splitMsg[5]);
+            this.value = String.format("%s,%s,%s", splitMsg[3], splitMsg[4], splitMsg[5]);
             deviceSettingStep03.setData(displayMsg);
             deviceSettingStep04.setData(displayMsg);
         }

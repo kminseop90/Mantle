@@ -48,6 +48,19 @@ public class CalendarFragment extends Fragment implements LocationListener {
         return v;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        initializeViews();
+    }
+
+    private void initializeViews() {
+        todayView.setText("");
+        todayDetailView.setText("");
+        addressView.setText("");
+        calendarView.refresh();
+    }
+
     private void initializeViews(View parent) {
         todayView = parent.findViewById(R.id.text_calendar_today_date);
         todayDetailView = parent.findViewById(R.id.text_calendar_date);
@@ -56,9 +69,9 @@ public class CalendarFragment extends Fragment implements LocationListener {
         calendarView.setOnCalendarListener(new CalendarView.OnCalendarListener() {
             @Override
             public void onCalendarDayClick(CalendarModel calendarModel) {
-                if(calendarModel != null) {
+                if (calendarModel != null) {
                     todayView.setText(String.format("%d월%d일", calendarModel.getMonth(), calendarModel.getDay()));
-                    if(calendarModel.getNoti() != null) {
+                    if (calendarModel.getNoti() != null) {
                         addressView.setText(getAddress(calendarModel.getNoti().getLatitude(), calendarModel.getNoti().getLongitude()));
                         todayDetailView.setText(calendarModel.getNoti().getTime());
                     }
@@ -70,7 +83,7 @@ public class CalendarFragment extends Fragment implements LocationListener {
 
     private void initializeData() {
         Calendar calendar = Calendar.getInstance();
-        int month = calendar.get(Calendar.MONTH) +1;
+        int month = calendar.get(Calendar.MONTH) + 1;
         int day = calendar.get(Calendar.DAY_OF_MONTH);
 
         todayView.setText(String.format("%d월%d일", month, day));
@@ -106,8 +119,8 @@ public class CalendarFragment extends Fragment implements LocationListener {
     }
 
     private String getAddress(double latitude, double longitude) {
-        String nowAddress ="현재 위치를 확인 할 수 없습니다.";
-        if(getContext() == null) return nowAddress;
+        String nowAddress = "현재 위치를 확인 할 수 없습니다.";
+        if (getContext() == null) return nowAddress;
 
         Geocoder geocoder = new Geocoder(getContext(), Locale.KOREA);
         List<Address> address;
@@ -116,7 +129,7 @@ public class CalendarFragment extends Fragment implements LocationListener {
                 address = geocoder.getFromLocation(latitude, longitude, 1);
                 if (address != null && address.size() > 0) {
                     String currentLocationAddress = address.get(0).getAddressLine(0).toString();
-                    nowAddress  = currentLocationAddress;
+                    nowAddress = currentLocationAddress;
                 }
             }
         } catch (IOException e) {
@@ -128,7 +141,7 @@ public class CalendarFragment extends Fragment implements LocationListener {
 
     @Override
     public void onLocationChanged(Location location) {
-        if(location != null && addressView != null) {
+        if (location != null && addressView != null) {
             addressView.setText(getAddress(location.getLatitude(), location.getLatitude()));
         }
         locationManager.removeUpdates(this);
@@ -138,10 +151,12 @@ public class CalendarFragment extends Fragment implements LocationListener {
     public void onStatusChanged(String provider, int status, Bundle extras) {
 
     }
+
     @Override
     public void onProviderEnabled(String provider) {
 
     }
+
     @Override
     public void onProviderDisabled(String provider) {
 

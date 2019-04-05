@@ -99,8 +99,9 @@ public class NotiActivity extends BaseActivity {
             int count = Integer.valueOf(countView.getText().toString());
             if(count <= 0) {
                 sendSMS();
-                Toast.makeText(NotiActivity.this, "Boom!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(NotiActivity.this, "Send Message", Toast.LENGTH_SHORT).show();
                 CrackerManager.getInstance().write("F4");
+                finish();
                 return;
             }
             sendEmptyMessageDelayed(0, 1000);
@@ -116,10 +117,14 @@ public class NotiActivity extends BaseActivity {
             int count = getCount();
             switch (id) {
                 case R.id.icon_noti_count_minus:
-                    setCount(--count);
+                    if(count > 50) {
+                        setCount(--count);
+                    }
                     break;
                 case R.id.icon_noti_count_plus:
-                    setCount(++count);
+                    if(count <= 149) {
+                        setCount(++count);
+                    }
                     break;
                 case R.id.button_noti_save:
                     if(isEmergency) {
@@ -151,12 +156,15 @@ public class NotiActivity extends BaseActivity {
 
         if(!DEFAULT_PHONE_NUMBER.equals(phone01)) {
             smsManager.sendTextMessage(phone01, null, googleMapUrl, null, null);
+            smsManager.sendTextMessage(phone01, null, defaultSendMessage, null, null);
         }
         if(!DEFAULT_PHONE_NUMBER.equals(phone02)) {
             smsManager.sendTextMessage(phone02, null, googleMapUrl, null, null);
+            smsManager.sendTextMessage(phone01, null, defaultSendMessage, null, null);
         }
         if(!DEFAULT_PHONE_NUMBER.equals(phone03)) {
             smsManager.sendTextMessage(phone03, null, googleMapUrl, null, null);
+            smsManager.sendTextMessage(phone01, null, defaultSendMessage, null, null);
         }
     }
 
@@ -167,8 +175,12 @@ public class NotiActivity extends BaseActivity {
         }
         Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-        double longitude = location.getLongitude();
-        double latitude = location.getLatitude();
+        double longitude = 0;
+        double latitude = 0;
+        if(location != null) {
+            longitude = location.getLongitude();
+            latitude = location.getLatitude();
+        }
 
         String strLoc = String.valueOf(latitude) + "," + String.valueOf(longitude);
         return strLoc;
