@@ -139,7 +139,6 @@
                 <ImageView
                     android:layout_marginRight="30dp"
                     android:layout_gravity="center"
-                    android:src="@drawable/icon_under"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -199,11 +198,11 @@
 
                     <ImageView
                         android:id="@+id/btn_setting_phone_edit_01"
-                        android:layout_marginRight="60dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/icon_edit_3"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginRight="60dp"
+                        android:src="@drawable/edit" />
 
                 </LinearLayout>
                 <LinearLayout
@@ -256,7 +255,7 @@
                         android:id="@+id/btn_setting_phone_edit_02"
                         android:layout_marginRight="60dp"
                         android:layout_gravity="center"
-                        android:src="@drawable/icon_edit_3"
+                        android:src="@drawable/edit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 
@@ -312,7 +311,7 @@
                         android:id="@+id/btn_setting_phone_edit_03"
                         android:layout_marginRight="60dp"
                         android:layout_gravity="center"
-                        android:src="@drawable/icon_edit_3"
+                        android:src="@drawable/edit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 

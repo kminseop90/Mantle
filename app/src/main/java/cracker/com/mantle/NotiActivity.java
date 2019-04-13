@@ -39,6 +39,7 @@ public class NotiActivity extends BaseActivity {
     private boolean isEmergency = false;
     private PowerManager powerManager;
     private PowerManager.WakeLock wakeLock;
+    private String locationMessage = "";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,6 +54,7 @@ public class NotiActivity extends BaseActivity {
         initializeViews();
         initializeData();
         if(isEmergency) {
+            this.locationMessage = CrackerManager.getInstance().getLocationMessage();
             initializeEmergency();
             startTimer();
             CrackerManager.getInstance().write("F3");
@@ -148,7 +150,7 @@ public class NotiActivity extends BaseActivity {
         String phone03 = preferenceUtil.getPrefStringValue(PreferenceUtil.PREF_PHONE_NUMBER_03, NotiActivity.DEFAULT_PHONE_NUMBER);
 
         String googleMapBaseUrl = "https://map.google.com/maps/search/?api=1&query=%s";
-        String googleMapUrl = String.format(googleMapBaseUrl, getLocation());
+        String googleMapUrl = String.format(googleMapBaseUrl, locationMessage);
 
         String defaultSendMessage = "긴급상황 도움요청이 왔습니다! MANTLE에 의해 발송 ";
 
@@ -212,9 +214,16 @@ public class NotiActivity extends BaseActivity {
         notiModel.setDay(day + "");
         SimpleDateFormat f = new SimpleDateFormat("MM월dd일 a h:mm", Locale.KOREA);
         notiModel.setTime(f.format(new Date()));
-        notiModel.setLatitude(Double.parseDouble(getLocation().split(",")[0]));
-        notiModel.setLongitude(Double.parseDouble(getLocation().split(",")[1]));
+        notiModel.setLatitude(Double.parseDouble(locationMessage.split(",")[0]));
+        notiModel.setLongitude(Double.parseDouble(locationMessage.split(",")[1]));
 
         preferenceUtil.setNotiValue(String.format("%04d%02d%02d", year, month, day), notiModel);
     }
+
+    Handler lcoationHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            locationMessage = (String)msg.obj;
+        }
+    };
 }

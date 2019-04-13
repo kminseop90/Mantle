@@ -85,6 +85,24 @@ public class CrackerManager {
         return lastReceiveData;
     }
 
+    private String msg;
+
+    public void setLocationMessage(String msg) {
+        this.msg = msg;
+    }
+
+    public String getLocationMessage() {
+        return this.msg;
+    }
+
+    public void setLocationListener(Handler handler) {
+        Message msg = new Message();
+        msg.what = 1;
+        msg.obj = msg;
+
+        handler.sendMessage(msg);
+    }
+
     public void write(String order) {
             /*F1 : LEFT 10회 점등, Buzzer
     F2 : RIGHT 10회 점등, Buzzer
@@ -161,14 +179,30 @@ public class CrackerManager {
         return data;
     }
 
+    boolean isFlag = false;
 
     private Handler gyroHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            bluetoothGatt.readCharacteristic(mGattCharacteristics.get(2).get(0));
+            if(isFlag) {
+                bluetoothGatt.readCharacteristic(mGattCharacteristics.get(2).get(0));
+
+            } else {
+                bluetoothGatt.readCharacteristic(mGattCharacteristics.get(2).get(1));
+            }
+            isFlag = !isFlag;
             sendEmptyMessageDelayed(0, dataIntervalSecond);
         }
     };
+
+    private Handler heartHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+
+            sendEmptyMessageDelayed(0, dataIntervalSecond);
+        }
+    };
+
     private BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
@@ -198,26 +232,41 @@ public class CrackerManager {
         @Override
         public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             super.onCharacteristicRead(gatt, characteristic, status);
-            final byte[] data = characteristic.getValue();
-            String stringData = "";
-            if (data != null && data.length > 0) {
-                final StringBuilder stringBuilder = new StringBuilder(data.length);
-                for (byte byteChar : data) {
-                    stringBuilder.append(String.format("%02d ", byteChar));
+            if (GATT_CHARACTERISTIC_01.equals(characteristic.getUuid().toString())) {
+                final byte[] data = characteristic.getValue();
+                String stringData = "";
+                if (data != null && data.length > 0) {
+                    final StringBuilder stringBuilder = new StringBuilder(data.length);
+                    for (byte byteChar : data) {
+//                        stringBuilder.append(String.format("%02d ", byteChar & 0xFF)); unsinged int
+                        stringBuilder.append(String.format("%02d ", byteChar));
+                    }
+                    stringData = stringBuilder.toString();
                 }
-                stringData = stringBuilder.toString();
-            }
 
-            lastReceiveData = stringData;
-            if(dataStreamListeners != null && !dataStreamListeners.isEmpty()) {
-                for(DataStreamListener dataStreamListener : dataStreamListeners) {
-                    dataStreamListener.onDataReceive(stringData);
+                lastReceiveData = stringData;
+                if(dataStreamListeners != null && !dataStreamListeners.isEmpty()) {
+                    for(DataStreamListener dataStreamListener : dataStreamListeners) {
+                        dataStreamListener.onDataReceive(stringData);
+                    }
                 }
-            }
-            if (GATT_CHARACTERISTIC_01.equals(characteristic.getUuid())) {
+            } else if (GATT_CHARACTERISTIC_02.equals(characteristic.getUuid().toString())) {
+                final byte[] data = characteristic.getValue();
+                String stringData = "";
+                if (data != null && data.length > 0) {
+                    final StringBuilder stringBuilder = new StringBuilder(data.length);
+                    for (byte byteChar : data) {
+                        stringBuilder.append(String.format("%02d ", byteChar & 0xFF));
+                    }
+                    stringData = stringBuilder.toString();
+                }
 
-            } else if (GATT_CHARACTERISTIC_02.equals(characteristic.getUuid())) {
-
+                lastReceiveData = stringData;
+                if(dataStreamListeners != null && !dataStreamListeners.isEmpty()) {
+                    for(DataStreamListener dataStreamListener : dataStreamListeners) {
+                        dataStreamListener.onHeartReceive(stringData);
+                    }
+                }
             } else if (GATT_CHARACTERISTIC_03.equals(characteristic.getUuid())) {
 
             }

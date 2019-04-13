@@ -74,7 +74,6 @@ public class BLEConnectActivity extends BaseActivity implements View.OnClickList
 
     private void changeView(boolean isScan) {
         if (isScan) {
-            statusIcon.setImageResource(R.drawable.icon_broadcasting);
             statusMessage.setText("디바이스와 연결중 입니다.");
             nextView.setVisibility(View.INVISIBLE);
         } else {

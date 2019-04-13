@@ -137,10 +137,15 @@ public class DeviceActivity extends BaseActivity implements DataStreamListener {
         if(TextUtils.isEmpty(msg)) return;
         String[] splitMsg = msg.split(" ");
         if(splitMsg.length >= 6) {
-            String displayMsg = String.format("%s\n%s\n%s", splitMsg[3], splitMsg[4], splitMsg[5]);
-            this.value = String.format("%s,%s,%s", splitMsg[3], splitMsg[4], splitMsg[5]);
+            String displayMsg = String.format("%s\n%s\n%s", splitMsg[0], splitMsg[1], splitMsg[2]);
+            this.value = String.format("%s,%s,%s", splitMsg[0], splitMsg[1], splitMsg[2]);
             deviceSettingStep03.setData(displayMsg);
             deviceSettingStep04.setData(displayMsg);
         }
+    }
+
+    @Override
+    public void onHeartReceive(String msg) {
+
     }
 }
