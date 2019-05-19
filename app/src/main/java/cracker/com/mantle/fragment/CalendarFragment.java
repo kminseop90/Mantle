@@ -16,10 +16,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -27,8 +29,9 @@ import java.util.Locale;
 import cracker.com.mantle.R;
 import cracker.com.mantle.components.CalendarView;
 import cracker.com.mantle.model.CalendarModel;
+import cracker.com.mantle.model.NotiModel;
 
-public class CalendarFragment extends Fragment implements LocationListener {
+public class CalendarFragment extends Fragment implements LocationListener, View.OnClickListener {
     public static final String TAG = CalendarFragment.class.getSimpleName();
     private final int REQUEST_FINE_LOCATION = 1234;
 
@@ -37,6 +40,11 @@ public class CalendarFragment extends Fragment implements LocationListener {
     private TextView addressView;
     private CalendarView calendarView;
     private LocationManager locationManager;
+    private ImageView calendarPrevView;
+    private ImageView calendarNextView;
+
+    private ArrayList<NotiModel> currentNotiModel;
+    private int currentPosition = 0;
 
     @Nullable
     @Override
@@ -66,18 +74,34 @@ public class CalendarFragment extends Fragment implements LocationListener {
         todayDetailView = parent.findViewById(R.id.text_calendar_date);
         addressView = parent.findViewById(R.id.text_calendar_address);
         calendarView = parent.findViewById(R.id.view_calendar_list);
+        calendarNextView = parent.findViewById(R.id.calendar_next_view);
+        calendarPrevView = parent.findViewById(R.id.calendar_prev_view);
         calendarView.setOnCalendarListener(new CalendarView.OnCalendarListener() {
             @Override
             public void onCalendarDayClick(CalendarModel calendarModel) {
                 if (calendarModel != null) {
                     todayView.setText(String.format("%d월%d일", calendarModel.getMonth(), calendarModel.getDay()));
                     if (calendarModel.getNoti() != null) {
-                        addressView.setText(getAddress(calendarModel.getNoti().getLatitude(), calendarModel.getNoti().getLongitude()));
-                        todayDetailView.setText(calendarModel.getNoti().getTime());
+                        currentNotiModel = calendarModel.getNoti();
+                        currentPosition = calendarModel.getNoti().size() - 1;
+                        setAddress(currentPosition);
+                        calendarNextView.setVisibility(View.GONE);
+                        calendarPrevView.setVisibility(View.VISIBLE);
+                        if(currentPosition == 0) {
+                            calendarPrevView.setVisibility(View.GONE);
+                        }
                     }
                 }
             }
         });
+
+        calendarPrevView.setOnClickListener(this);
+        calendarNextView.setOnClickListener(this);
+    }
+
+    private void setAddress(int position) {
+        addressView.setText(getAddress(currentNotiModel.get(position).getLatitude(), currentNotiModel.get(position).getLongitude()));
+        todayDetailView.setText(currentNotiModel.get(position).getTime());
     }
 
 
@@ -160,5 +184,22 @@ public class CalendarFragment extends Fragment implements LocationListener {
     @Override
     public void onProviderDisabled(String provider) {
 
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (view.getId() == R.id.calendar_next_view) {
+            setAddress(++currentPosition);
+            calendarPrevView.setVisibility(View.VISIBLE);
+            if (currentPosition == currentNotiModel.size() - 1) {
+                calendarNextView.setVisibility(View.GONE);
+            }
+        } else if (view.getId() == R.id.calendar_prev_view) {
+            setAddress(--currentPosition);
+            calendarNextView.setVisibility(View.VISIBLE);
+            if(currentPosition == 0) {
+                calendarPrevView.setVisibility(View.GONE);
+            }
+        }
     }
 }

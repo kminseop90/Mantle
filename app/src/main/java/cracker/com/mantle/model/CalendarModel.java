@@ -17,13 +17,13 @@ public class CalendarModel {
     private boolean isAttend;
     private boolean isToday;
     private boolean isDayInThisMonth;
-    private NotiModel noti;
+    private ArrayList<NotiModel> noti;
 
-    public NotiModel getNoti() {
+    public ArrayList<NotiModel> getNoti() {
         return noti;
     }
 
-    public void setNoti(NotiModel noti) {
+    public void setNoti(ArrayList<NotiModel> noti) {
         this.noti = noti;
     }
 
@@ -199,7 +199,7 @@ public class CalendarModel {
         String yyyyMMdd = String.format("%04d%02d%02d", year, month, day);
 
         PreferenceUtil preferenceUtil = new PreferenceUtil(context);
-        NotiModel notiModel = preferenceUtil.getNotiValue(yyyyMMdd);
+        ArrayList<NotiModel> notiModel = preferenceUtil.getNotiValue(yyyyMMdd);
         this.noti = notiModel;
     }
 }

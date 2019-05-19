@@ -9,10 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import cracker.com.mantle.BLEConnectActivity;
 import cracker.com.mantle.DeviceActivity;
+import cracker.com.mantle.MainActivity;
 import cracker.com.mantle.NotiActivity;
 import cracker.com.mantle.R;
 import cracker.com.mantle.TypeActivity;
+import cracker.com.mantle.service.CrackerManager;
 import cracker.com.mantle.util.PreferenceUtil;
 import cracker.com.mantle.dialog.PhoneNumEditDialog;
 
@@ -40,6 +43,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
         parentView.findViewById(R.id.btn_setting_phone_edit_03).setOnClickListener(this);
         parentView.findViewById(R.id.layout_setting_change_mode).setOnClickListener(this);
         parentView.findViewById(R.id.layout_setting_change_device).setOnClickListener(this);
+        parentView.findViewById(R.id.layout_setting_ble).setOnClickListener(this);
 
         phoneNumber01View = parentView.findViewById(R.id.txt_setting_phone_number_01);
         phoneNumber02View = parentView.findViewById(R.id.txt_setting_phone_number_02);
@@ -96,6 +100,15 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                 i = new Intent(getContext(), DeviceActivity.class);
                 i.putExtra("flag", true);
                 startActivity(i);
+                break;
+            case R.id.layout_setting_ble:
+                CrackerManager.getInstance().disconnect();
+
+                i = new Intent(getContext(), BLEConnectActivity.class);
+                i.putExtra("flag", true);
+                startActivity(i);
+                getActivity().finish();
+                break;
         }
     }
 }

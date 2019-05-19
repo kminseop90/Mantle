@@ -28,6 +28,7 @@ public class BLEConnectActivity extends BaseActivity implements View.OnClickList
     private Handler handler;
 
     boolean isScanFinish = false;
+    public static  boolean isSettingFlag = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -35,6 +36,9 @@ public class BLEConnectActivity extends BaseActivity implements View.OnClickList
         setContentView(R.layout.activity_ble_connect);
 
         initializeViews();
+        if(getIntent() != null) {
+            isSettingFlag = getIntent().getBooleanExtra("flag", false);
+        }
     }
 
     private void initializeViews() {

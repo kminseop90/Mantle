@@ -60,7 +60,7 @@
                 android:layout_gravity="center"
                 android:text="현재 피로도 3단계"
                 android:textColor="#4a4a4a"
-                android:textSize="24dp" />
+                android:textSize="18dp" />
 
             <TextView
                 android:id="@+id/text_status_message"
@@ -70,7 +70,16 @@
                 android:gravity="center"
                 android:text="안전 라이딩\n하세요"
                 android:textColor="#c77171"
-                android:textSize="38dp" />
+                android:textSize="30dp" />
+
+            <TextView
+                android:id="@+id/text_battery"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textColor="#4a4a4a"
+                android:textSize="30dp" />
 
         </LinearLayout>
 

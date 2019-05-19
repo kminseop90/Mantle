@@ -24,6 +24,7 @@ public class StatusFragment extends Fragment implements View.OnClickListener, Da
     private ImageView circleView;
     private TextView stepVIew;
     private TextView statusView;
+    private TextView batteryView;
 
     @Nullable
     @Override
@@ -40,7 +41,7 @@ public class StatusFragment extends Fragment implements View.OnClickListener, Da
         circleView = parentView.findViewById(R.id.img_circle);
         statusView = parentView.findViewById(R.id.text_status_message);
         stepVIew = parentView.findViewById(R.id.text_status_step);
-        CrackerManager.getInstance().addDataStreamListeners(this);
+        batteryView = parentView.findViewById(R.id.text_battery);
     }
 
     private void initializeData() {
@@ -85,7 +86,25 @@ public class StatusFragment extends Fragment implements View.OnClickListener, Da
                     statusView.setTextColor(Color.parseColor("#c84040"));
                     stepVIew.setText("현재 피로도 4단계");
                 }
+
+                if(heartValue >= 100) {
+                    batteryView.setText("100%");
+                } else {
+                    batteryView.setText(heartValue + "%");
+                }
             }
         });
+    }
+
+    @Override
+    public void onPause() {
+        CrackerManager.getInstance().removeDataStreamListener(this);
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        CrackerManager.getInstance().addDataStreamListeners(this);
     }
 }

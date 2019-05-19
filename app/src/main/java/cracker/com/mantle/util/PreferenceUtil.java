@@ -5,6 +5,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 import cracker.com.mantle.model.NotiModel;
 
@@ -43,15 +48,22 @@ public class PreferenceUtil {
     }
 
     public void setNotiValue(String key, NotiModel notiModel) {
-        String value = new Gson().toJson(notiModel);
+        ArrayList<NotiModel> notiModels = getNotiValue(key);
+        if(notiModels == null)
+            notiModels = new ArrayList<>();
+
+        notiModels.add(notiModel);
+
+        String value = new Gson().toJson(notiModels);
         editor.putString(key, value);
         editor.commit();
     }
 
-    public NotiModel getNotiValue(String key) {
+    public ArrayList<NotiModel> getNotiValue(String key) {
         String notiValue = sharedPreferences.getString(key, "");
-        NotiModel notiModel = new Gson().fromJson(notiValue, NotiModel.class);
-        return notiModel;
+        Type listType = new TypeToken<ArrayList<NotiModel>>(){}.getType();
+        ArrayList<NotiModel> list = new Gson().fromJson(notiValue, listType);
+        return list;
     }
 
     public String getPrefStringValue(String key, String defaultString) {

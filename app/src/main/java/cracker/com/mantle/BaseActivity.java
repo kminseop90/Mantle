@@ -29,7 +29,11 @@ public class BaseActivity extends AppCompatActivity {
             @Override
             public void onNextClick(CheckDialog dialog) {
                 dialog.dismissAllowingStateLoss();
-                startActivity(new Intent(BaseActivity.this, DeviceActivity.class));
+                if(BLEConnectActivity.isSettingFlag) {
+                    startActivity(new Intent(BaseActivity.this, MainActivity.class));
+                } else {
+                    startActivity(new Intent(BaseActivity.this, DeviceActivity.class));
+                }
                 finish();
 
                 try {

@@ -36,35 +36,67 @@
         android:textColor="#4a4a4a"
         android:textSize="54dp" />
 
-    <TextView
-        android:id="@+id/text_calendar_address"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:id="@+id/layout_calendar_address"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/text_calendar_today_date"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:gravity="center_horizontal"
-        android:text=""
-        android:textColor="#7186c7"
-        android:textSize="15dp" />
+        android:layout_centerHorizontal="true">
 
-    <TextView
-        android:id="@+id/text_calendar_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/text_calendar_address"
-        android:layout_centerHorizontal="true"
-        android:gravity="center_horizontal"
-        android:lineSpacingExtra="5sp"
-        android:text=""
-        android:textColor="#657183"
-        android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/text_calendar_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="15dp"
+            android:gravity="center_horizontal"
+            android:text=""
+            android:textColor="#7186c7"
+            android:textSize="15dp" />
+
+        <TextView
+            android:id="@+id/text_calendar_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_calendar_address"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:gravity="center_horizontal"
+            android:lineSpacingExtra="5sp"
+            android:text=""
+            android:textColor="#657183"
+            android:textSize="12sp" />
+
+        <ImageView
+            android:visibility="gone"
+            android:id="@+id/calendar_prev_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/calendar_prev" />
+
+        <ImageView
+            android:visibility="gone"
+            android:id="@+id/calendar_next_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/calendar_next" />
+    </RelativeLayout>
+
 
     <View
         android:id="@+id/view_calendar_divider"
         android:layout_width="match_parent"
         android:layout_height="4dp"
-        android:layout_below="@id/text_calendar_date"
+        android:layout_below="@id/layout_calendar_address"
         android:layout_marginTop="5dp"
         android:background="#e3e3e3" />
 
