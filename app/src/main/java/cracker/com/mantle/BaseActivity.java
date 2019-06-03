@@ -2,25 +2,23 @@ package cracker.com.mantle;
 
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.os.Handler;
+import android.os.Build;
 import android.os.IBinder;
-import android.os.Looper;
 import android.os.RemoteException;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.Toast;
 
 import cracker.com.mantle.dialog.CheckDialog;
 import cracker.com.mantle.service.BLEService;
-import cracker.com.mantle.service.CrackerManager;
+import cracker.com.mantle.service.GPSService;
 
 public class BaseActivity extends AppCompatActivity {
     public static final String TAG = BaseActivity.class.getSimpleName();
     RemoteService remoteService;
+    private boolean isBLEServiceRunning = false;
+    private boolean isGPSServiceRunning = false;
 
     private void showConnectComplete() {
         CheckDialog connectCompleteDialog = new CheckDialog();
@@ -60,6 +58,7 @@ public class BaseActivity extends AppCompatActivity {
 
         @Override
         public void onConnectFailed(final String address) throws RemoteException {
+            stopGPSService();
             //Toast.makeText(getApplicationContext(), "장치와 연결이 끊겼습니다.", Toast.LENGTH_SHORT).show();
 //            CrackerManager.getInstance().connect(BaseActivity.this, address);
         }
@@ -89,27 +88,52 @@ public class BaseActivity extends AppCompatActivity {
         }
     };
 
-    private void startServiceBind() {
-        Intent intent = new Intent(this, BLEService.class);
+    public void startGPSService() {
+        Intent gpsIntent = new Intent(this, GPSService.class);
 
-        bindService(intent, connection, Context.BIND_AUTO_CREATE);
-        startService(intent);
+//        if(!isGPSServiceRunning) {
+        if (Build.VERSION.SDK_INT >= 26) {
+            startForegroundService(gpsIntent);
+        } else {
+            startService(gpsIntent);
+        }
+        isGPSServiceRunning = true;
+//        }
     }
 
-    private void stopServiceBind() {
-        unbindService(connection);
-        stopService(new Intent(this, BLEService.class));
+    public void startServiceBind() {
+        Intent intent = new Intent(this, BLEService.class);
+
+//        if(!isBLEServiceRunning) {
+            bindService(intent, connection, Context.BIND_AUTO_CREATE);
+            startService(intent);
+            isBLEServiceRunning = true;
+//        }
+    }
+
+    public void stopServiceBind() {
+//        if(isBLEServiceRunning) {
+            unbindService(connection);
+            stopService(new Intent(this, BLEService.class));
+            isBLEServiceRunning = false;
+//        }
+    }
+
+    public void stopGPSService() {
+//        if(isGPSServiceRunning) {
+            stopService(new Intent(this, GPSService.class));
+//        }
     }
 
     @Override
     protected void onResume() {
-        startServiceBind();
         super.onResume();
+        startServiceBind();
     }
 
     @Override
     protected void onPause() {
-        stopServiceBind();
         super.onPause();
+        stopServiceBind();
     }
 }

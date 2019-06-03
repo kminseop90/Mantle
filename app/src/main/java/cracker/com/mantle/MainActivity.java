@@ -1,25 +1,18 @@
 package cracker.com.mantle;
 
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
-import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.MenuItem;
 
 import cracker.com.mantle.fragment.CalendarFragment;
 import cracker.com.mantle.fragment.SettingFragment;
 import cracker.com.mantle.fragment.StatusFragment;
-import cracker.com.mantle.service.BLEService;
 
 public class MainActivity extends BaseActivity {
 
@@ -39,6 +32,8 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
 
         initialize();
+        startGPSService();
+//        startServiceBind();
 
 
         new Handler().postDelayed(new Runnable() {
@@ -112,69 +107,4 @@ public class MainActivity extends BaseActivity {
     }
 
 
-    RemoteServiceCallback remoteServiceCallback = new RemoteServiceCallback.Stub() {
-
-        @Override
-        public void valueChange(String value) throws RemoteException {
-            Log.d(TAG, "valueChange: " + value);
-        }
-
-        @Override
-        public void onServiceDiscovered() throws RemoteException {
-        }
-
-        @Override
-        public void onConnectFailed(final String address) throws RemoteException {
-        }
-    };
-
-    RemoteService remoteService;
-    ServiceConnection connection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            if(iBinder != null) {
-                remoteService = RemoteService.Stub.asInterface(iBinder);
-                try {
-                    remoteService.registerCallback(remoteServiceCallback);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-            if(remoteService != null) {
-                try {
-                    remoteService.unregisterCallback(remoteServiceCallback);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    };
-
-    private void startServiceBind() {
-        Intent intent = new Intent(this, BLEService.class);
-
-        bindService(intent, connection, Context.BIND_AUTO_CREATE);
-        startService(intent);
-    }
-
-    private void stopServiceBind() {
-        unbindService(connection);
-        stopService(new Intent(this, BLEService.class));
-    }
-
-    @Override
-    protected void onResume() {
-//        startServiceBind();
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-//        stopServiceBind();
-        super.onPause();
-    }
 }

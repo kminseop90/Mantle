@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
@@ -30,6 +29,7 @@ public class SplashActivity extends BaseActivity {
                         splashHandler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
+//                                startServiceBind();
                                 startActivity(new Intent(SplashActivity.this, TypeActivity.class));
                                 finish();
                             }
@@ -44,5 +44,10 @@ public class SplashActivity extends BaseActivity {
                 .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
                 .setPermissions(Manifest.permission.READ_PHONE_STATE, Manifest.permission.RECEIVE_SMS, Manifest.permission.SEND_SMS, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .check();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 }

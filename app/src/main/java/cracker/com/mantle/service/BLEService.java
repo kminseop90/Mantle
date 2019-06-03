@@ -1,19 +1,11 @@
 package cracker.com.mantle.service;
 
-import android.Manifest;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 import java.io.File;
@@ -23,20 +15,16 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import cracker.com.mantle.NotiActivity;
 import cracker.com.mantle.RemoteService;
 import cracker.com.mantle.RemoteServiceCallback;
 import cracker.com.mantle.util.PreferenceUtil;
 
-public class BLEService extends Service implements ConnectListener, DataStreamListener, LocationListener {
+public class BLEService extends Service implements ConnectListener, DataStreamListener {
 
     public static final String TAG = BLEService.class.getSimpleName();
 
     final RemoteCallbackList<RemoteServiceCallback> callbacks = new RemoteCallbackList();
     private FileOutputStream fos;
-    double longitude;
-    double latitude;
-    private String locationMessage;
 
 
     @Nullable
@@ -84,7 +72,6 @@ public class BLEService extends Service implements ConnectListener, DataStreamLi
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "onCreate: ");
-        requestLocation();
 //        handler.sendEmptyMessage(0);
     }
 
@@ -195,8 +182,9 @@ public class BLEService extends Service implements ConnectListener, DataStreamLi
             SimpleDateFormat dataFormat = new SimpleDateFormat("hh:mm:ss");
             String date = dataFormat.format(calendar.getTime()) + " - ";
             type += "_";
-            msg = date + locationMessage + type + msg;
+            msg = date + CrackerManager.getInstance().getLocationMessage() + type + msg;
             msg += "\n";
+            Log.d(TAG, "saveDataAtFile: " + msg);
             fos.write(msg.getBytes());
             fos.flush();
         } catch (IOException e) {
@@ -204,56 +192,9 @@ public class BLEService extends Service implements ConnectListener, DataStreamLi
         }
     }
 
-    public void requestLocation() {
-        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-
-        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, this);
-        lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, this);
-    }
-
-    public void removeLocationListener() {
-        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        lm.removeUpdates(this);
-    }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        removeLocationListener();
-//        if(fos != null) {
-//            try {
-//                fos.close();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        if(location == null) return;
-        this.latitude = location.getLatitude();
-        this.longitude = location.getLongitude();
-        locationMessage = String.valueOf(latitude) + "," + String.valueOf(longitude);
-        CrackerManager.getInstance().setLocationMessage(locationMessage);
-    }
-
-    @Override
-    public void onStatusChanged(String s, int i, Bundle bundle) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String s) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String s) {
-
     }
 }

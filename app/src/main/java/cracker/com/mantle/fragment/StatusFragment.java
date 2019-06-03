@@ -1,5 +1,7 @@
 package cracker.com.mantle.fragment;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,6 +15,7 @@ import android.widget.TextView;
 
 import java.util.Calendar;
 
+import cracker.com.mantle.MainActivity;
 import cracker.com.mantle.R;
 import cracker.com.mantle.service.CrackerManager;
 import cracker.com.mantle.service.DataStreamListener;
@@ -42,6 +45,29 @@ public class StatusFragment extends Fragment implements View.OnClickListener, Da
         statusView = parentView.findViewById(R.id.text_status_message);
         stepVIew = parentView.findViewById(R.id.text_status_step);
         batteryView = parentView.findViewById(R.id.text_battery);
+
+        parentView.findViewById(R.id.logo).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog alert = new AlertDialog.Builder(getContext())
+                        .setTitle("연결")
+                        .setMessage("연결을 끊으시겠습니까?")
+                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                ((MainActivity)getActivity()).stopGPSService();
+                                CrackerManager.getInstance().disconnect();
+                                getActivity().finish();
+                            }
+                        }).setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }).create();
+                alert.show();
+            }
+        });
     }
 
     private void initializeData() {

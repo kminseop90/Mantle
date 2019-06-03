@@ -59,6 +59,9 @@
             android:name=".service.BLEService"
             android:enabled="true" />
 
+        <service android:name=".service.GPSService"
+            android:enabled="true"/>
+
     </application>
 
 </manifest>

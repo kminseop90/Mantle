@@ -33,10 +33,15 @@ public class EditBox extends FrameLayout {
         sensorValue = view.findViewById(R.id.txt_editbox_value);
     }
 
-    public void setText(String text) {
+    public void setText(final String text) {
         if(sensorValue != null) {
-            sensorValue.setText(text);
-            invalidate();
+            sensorValue.post(new Runnable() {
+                @Override
+                public void run() {
+                    sensorValue.setText(text);
+                    invalidate();
+                }
+            });
         }
     }
 
